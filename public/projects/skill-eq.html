@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="An interactive portfolio reconstruction of a deployed learning analytics system that maps xAPI activity to program skills and recommends next steps." />
+<title>Skill EQ Dashboard | A.J. Merlino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #11140f;
+  --surface: rgba(244,240,231,0.055);
+  --border: rgba(244,240,231,0.12);
+  --text: #f4f0e7;
+  --muted: #c7cec0;
+  --dim: #99a290;
+  --accent: #b7c995;
+  --blue: #8fb5bd;
+  --green: #d4bc7c;
+  --orange: #cf8d67;
+  --purple: #b3a2c3;
+  --red: #d87972;
+  --teal: #78bdb0;
+  --mono: 'DM Mono', monospace;
+  --heading: 'Space Grotesk', sans-serif;
+  --body: 'Inter', -apple-system, system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg); color: var(--text); font-family: var(--body); -webkit-font-smoothing: antialiased; }
+body { min-height: 100vh; padding-top: env(safe-area-inset-top, 0); padding-bottom: env(safe-area-inset-bottom, 0); background: radial-gradient(circle at 72% -8%, rgba(183,201,149,0.16), transparent 32rem), radial-gradient(circle at 8% 30%, rgba(207,141,103,0.09), transparent 28rem), var(--bg); }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+/* ── Layout ── */
+.shell { max-width: 1180px; min-height: 100vh; margin: 0 auto; padding: 0 24px 72px; background: linear-gradient(180deg, rgba(17,20,15,0.18), rgba(17,20,15,0.48)); box-shadow: 0 0 7rem rgba(0,0,0,0.18); }
+.case-intro { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 15px; max-width: 760px; padding: 30px 0 6px; }
+.signature-mark { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--accent); border-radius: 12px; color: var(--accent); font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: -0.12em; }
+.case-kicker { margin: 0 0 4px; color: var(--accent); font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; }
+.case-intro h2 { margin: 0; color: var(--text); font-family: var(--heading); font-size: clamp(22px, 3vw, 32px); letter-spacing: -0.04em; line-height: 1.08; }
+.case-intro p:last-child { max-width: 650px; margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+header { position: relative; padding: 34px 0 0; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+.hdr-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 20px; }
+.hdr-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.hdr-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px rgba(39,174,96,0.5); }
+.hdr-label { font-size: 10px; font-weight: 700; color: var(--dim); letter-spacing: 2.5px; text-transform: uppercase; }
+h1 { font-family: var(--heading); font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.hdr-sub { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+.stat { padding: 14px 16px; background: linear-gradient(145deg, rgba(244,240,231,0.11), rgba(244,240,231,0.04)); border-radius: 12px; border: 1px solid rgba(244,240,231,0.16); box-shadow: inset 0 1px rgba(255,255,255,0.06); }
+.stat-label { font-size: 9.5px; color: var(--muted); font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; }
+.stat-val { font-size: 22px; font-weight: 800; font-family: var(--mono); margin-top: 2px; line-height: 1.2; }
+.stat-sub { font-size: 10px; color: var(--dim); margin-top: 1px; }
+
+/* Tabs */
+.tabs { display: flex; gap: 1px; overflow-x: auto; padding-bottom: 0; }
+.tab { padding: 10px 14px; font-size: 11px; font-weight: 600; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; border-radius: 6px 6px 0 0; font-family: var(--body); transition: color 0.15s, background 0.15s; display: flex; align-items: center; gap: 5px; }
+.tab:hover { background: rgba(255,255,255,0.03); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(224,90,56,0.07); }
+.tab svg { width: 13px; height: 13px; }
+
+/* Panel */
+.panel { background: linear-gradient(145deg, rgba(244,240,231,0.095), rgba(244,240,231,0.03)); border: 1px solid rgba(244,240,231,0.16); border-radius: 16px; padding: 22px; box-shadow: inset 0 1px rgba(255,255,255,0.06), 0 1.2rem 3rem rgba(0,0,0,0.12); }
+.panel-title { font-family: var(--heading); font-size: 13px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 7px; }
+.panel-title svg { width: 15px; height: 15px; }
+
+/* Gauge */
+.gauge { position: relative; width: 140px; height: 100px; flex-shrink: 0; }
+.gauge svg { width: 140px; height: 100px; }
+.gauge-text { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); text-align: center; }
+.gauge-num { font-size: 32px; font-weight: 800; font-family: var(--mono); line-height: 1; }
+.gauge-label { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
+
+/* Grid layouts */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* Domain bars */
+.domain-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
+.domain-icon { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+.domain-info { flex: 1; min-width: 0; }
+.domain-name { font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,0.72); }
+.domain-score { font-size: 13px; font-weight: 800; font-family: var(--mono); }
+.bar-track { height: 7px; background: rgba(255,255,255,0.04); border-radius: 4px; overflow: hidden; margin-top: 3px; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(0.22,1,0.36,1); }
+
+/* Radar (SVG) */
+.radar-wrap { display: flex; justify-content: center; padding: 8px 0; }
+
+/* Evidence cards */
+.ev-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(255,255,255,0.015); border-radius: 9px; }
+.ev-dot { width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0; }
+.ev-label { font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,0.7); flex: 1; }
+.ev-val { font-size: 13px; font-weight: 800; font-family: var(--mono); width: 28px; text-align: right; }
+.ev-bar { width: 52px; height: 5px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+.ev-bar-fill { height: 100%; border-radius: 3px; }
+
+/* Skill list in domain card */
+.skill-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 7px; background: rgba(255,255,255,0.015); }
+.skill-name { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.65); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.skill-score { font-size: 11.5px; font-weight: 700; font-family: var(--mono); }
+.skill-bar { width: 60px; height: 5px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+
+/* Badge tags */
+.badge { font-size: 8.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+
+/* Weight explainer */
+.weight-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(255,255,255,0.015); border-radius: 9px; }
+.weight-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.weight-icon svg { width: 14px; height: 14px; }
+.weight-bar { width: 48px; height: 5px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+.weight-pct { font-size: 11px; font-weight: 700; font-family: var(--mono); width: 32px; text-align: right; }
+
+/* Recommendation cards */
+.rec-card { background: rgba(255,255,255,0.015); border-radius: 11px; border: 1px solid var(--border); overflow: hidden; }
+.rec-header { padding: 13px 16px; display: flex; align-items: center; gap: 10px; }
+.rec-priority { width: 6px; height: 28px; border-radius: 3px; flex-shrink: 0; }
+.rec-info { flex: 1; min-width: 0; }
+.rec-skill { font-size: 12.5px; font-weight: 700; }
+.rec-domain { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.rec-score { text-align: right; flex-shrink: 0; }
+.rec-num { font-size: 15px; font-weight: 800; font-family: var(--mono); }
+.rec-gap { font-size: 9px; color: var(--dim); }
+
+/* Quick-win cards */
+.qw { padding: 16px; background: rgba(255,255,255,0.025); border-radius: 11px; border: 1px solid var(--border); }
+.qw-rank { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; }
+.qw-skill { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.qw-meta { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.qw-action { padding: 9px 11px; background: rgba(0,0,0,0.25); border-radius: 7px; }
+.qw-action-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.75); }
+.qw-action-gain { font-size: 10px; font-weight: 700; margin-top: 3px; }
+
+/* Course timeline */
+.term-group { margin-bottom: 14px; }
+.term-label { font-size: 9.5px; font-weight: 700; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.course-row { display: flex; align-items: center; gap: 9px; padding: 7px 11px; background: rgba(255,255,255,0.015); border-radius: 7px; margin-bottom: 3px; }
+.course-row svg { width: 13px; height: 13px; flex-shrink: 0; }
+.course-title { font-size: 11px; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.course-code { font-size: 9px; color: var(--dim); }
+.course-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+
+/* Section within tab */
+.section-gap { display: flex; flex-direction: column; gap: 16px; }
+
+/* Callout */
+.callout { border-radius: 14px; padding: 18px; }
+
+/* Formula */
+.formula { padding: 14px 16px; background: rgba(0,0,0,0.3); border-radius: 9px; font-family: var(--mono); font-size: 11.5px; line-height: 2; border: 1px solid rgba(224,90,56,0.08); }
+
+/* Responsive */
+@media (max-width: 720px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .hdr-row { flex-direction: column; align-items: flex-start; }
+  .gauge { align-self: center; }
+  h1 { font-size: 22px; }
+  .case-intro { grid-template-columns: 40px minmax(0, 1fr); padding-top: 20px; }
+  .signature-mark { width: 38px; height: 38px; }
+}
+
+/* Tab content toggling */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Prototype banner */
+.proto-banner { background: linear-gradient(90deg, rgba(183,201,149,0.14), rgba(143,181,189,0.07)); border: 1px solid rgba(183,201,149,0.24); border-radius: 12px; padding: 11px 16px; margin-bottom: 22px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); box-shadow: inset 0 1px rgba(255,255,255,0.035); }
+.proto-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; flex-shrink: 0; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+</style>
+</head>
+<body>
+
+<style>
+  .portfolio-nav{position:sticky;top:0;z-index:10000;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:68px;padding:0 clamp(20px,4vw,56px);background:rgba(16,18,15,.94);border-bottom:1px solid rgba(244,240,231,.1);backdrop-filter:blur(14px);color:#f4f0e7;font-family:"DM Mono",ui-monospace,monospace}
+  .portfolio-nav__wordmark{justify-self:start;color:#f4f0e7;text-decoration:none;font-size:.82rem;font-weight:500;letter-spacing:.14em;line-height:1.35;text-transform:uppercase}.portfolio-nav__links{display:flex;gap:clamp(12px,1.8vw,30px);align-items:center;font-size:.7rem;letter-spacing:.11em;line-height:1.35;text-transform:uppercase}.portfolio-nav__links a{color:rgba(244,240,231,.76);text-decoration:none;transition:color 180ms ease}.portfolio-nav__links a:hover,.portfolio-nav__links a:focus-visible{color:#b7c995}.portfolio-nav__spacer{justify-self:end;width:1px;height:1px}
+  @media(max-width:760px){.portfolio-nav{grid-template-areas:"mark spacer" "links links";grid-template-columns:1fr auto;row-gap:10px;min-height:0;padding:15px 20px 13px}.portfolio-nav__wordmark{grid-area:mark}.portfolio-nav__links{grid-area:links;justify-content:space-between;gap:8px;font-size:.54rem}.portfolio-nav__spacer{grid-area:spacer}}
+</style>
+<nav class="portfolio-nav" aria-label="Portfolio navigation">
+  <a class="portfolio-nav__wordmark" href="../../index.html#top" aria-label="A.J. Merlino home">A.J. Merlino</a>
+  <div class="portfolio-nav__links"><a href="../about.html#bio">About</a><a href="../../index.html#leadership">Leadership</a><a href="../../index.html#work">Design</a><a href="../../index.html#music">Music</a><a href="../../index.html#contact">Contact</a></div>
+  <span class="portfolio-nav__spacer" aria-hidden="true"></span>
+</nav>
+
+<div class="shell">
+
+<section class="case-intro" aria-labelledby="case-title">
+  <span class="signature-mark" aria-hidden="true">A.J.</span>
+  <div>
+    <p class="case-kicker">Interactive portfolio demonstration</p>
+    <h2 id="case-title">Skill EQ Dashboard</h2>
+    <p><strong>Purpose:</strong> connect learner activity with the skills and competencies students were developing across a program. The deployed system read xAPI statements from an LRS, mapped that activity to the relevant skills and competencies, and used the resulting skill matrix to recommend what to do next.<br /><br /><strong>My role:</strong> Product design, learning and competency architecture, experience design, data-to-skill mapping, and recommendation logic.<br /><br /><strong>Portfolio note:</strong> The interface shown here is a wireframe recreation of a deployed system. It preserves the core workflow and interaction model while removing proprietary data, branding, and production details.</p>
+  </div>
+</section>
+
+<!-- PROTOTYPE BANNER -->
+<div class="proto-banner">
+  <span class="proto-dot"></span>
+  <span><strong style="color:var(--accent)">Portfolio demonstration</strong> / deployed xAPI activity, skill mapping, and next-step recommendations</span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr-row">
+    <div>
+      <div class="hdr-meta">
+        <span class="hdr-dot"></span>
+        <span class="hdr-label">A.J. Merlino / learning analytics system</span>
+      </div>
+      <h1>Skill EQ Dashboard</h1>
+      <div class="hdr-sub">Alex Rivera · Term 8 of 10 · Sample learning profile</div>
+    </div>
+    <!-- Gauge -->
+    <div class="gauge">
+      <svg viewBox="0 0 140 100">
+        <path d="M 18 88 A 52 52 0 0 1 122 88" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12" stroke-linecap="round"/>
+        <path d="M 18 88 A 52 52 0 0 1 122 88" fill="none" stroke="#f2994a" stroke-width="12" stroke-linecap="round" stroke-dasharray="122 163" style="filter:drop-shadow(0 0 6px rgba(242,153,74,0.4))"/>
+      </svg>
+      <div class="gauge-text">
+        <div class="gauge-num" style="color:#f2994a">74</div>
+        <div class="gauge-label">Skill EQ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Learning Progress</div>
+      <div class="stat-val" style="color:var(--green)">74%</div>
+      <div class="stat-sub">28 / 38 modules</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Evidence Points</div>
+      <div class="stat-val" style="color:var(--blue)">127</div>
+      <div class="stat-sub">across all skills</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Skills Tracked</div>
+      <div class="stat-val" style="color:var(--orange)">48</div>
+      <div class="stat-sub">7 domains</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Avg Confidence</div>
+      <div class="stat-val" style="color:var(--accent)">74%</div>
+      <div class="stat-sub">weighted composite</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Overview</button>
+    <button class="tab" data-tab="skills"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Skill Domains</button>
+    <button class="tab" data-tab="evidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Evidence &amp; Rationale</button>
+    <button class="tab" data-tab="recs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>Recommendations</button>
+    <button class="tab" data-tab="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>Learning Path</button>
+    <button class="tab" data-tab="method"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Methodology</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TAB: OVERVIEW -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="tab-content active" id="tab-overview">
+<div class="grid-2">
+
+  <!-- Radar Chart (SVG) -->
+  <div class="panel">
+    <div class="panel-title">Skill Domain Profile</div>
+    <div class="radar-wrap">
+      <svg viewBox="0 0 320 280" width="100%" style="max-width:380px">
+        <!-- Grid rings -->
+        <g transform="translate(160,140)">
+          <polygon points="0,-110 95,-55 95,55 0,110 -95,55 -95,-55" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <polygon points="0,-82 71,-41 71,41 0,82 -71,41 -71,-41" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <polygon points="0,-55 47,-27 47,27 0,55 -47,27 -47,-27" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <!-- Data polygon: Design 78, Research 72, Comm 76, Collab 74, ProbSolve 71, ProfGrowth 69, TechAI 73 -->
+          <polygon points="0,-85.8 67.3,-37.8 65.3,40.7 -0.6,76.3 -69.4,40.2 -60.5,-39.6 0,-85.8"
+            fill="rgba(224,90,56,0.12)" stroke="#e05a38" stroke-width="2"/>
+          <!-- Dots -->
+          <circle cx="0" cy="-85.8" r="3.5" fill="#e05a38"/>
+          <circle cx="67.3" cy="-37.8" r="3.5" fill="#2d9cdb"/>
+          <circle cx="65.3" cy="40.7" r="3.5" fill="#27ae60"/>
+          <circle cx="-0.6" cy="76.3" r="3.5" fill="#9b51e0"/>
+          <circle cx="-69.4" cy="40.2" r="3.5" fill="#f2994a"/>
+          <circle cx="-60.5" cy="-39.6" r="3.5" fill="#eb5757"/>
+        </g>
+        <!-- Labels -->
+        <text x="160" y="18" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="Inter">Design Core</text>
+        <text x="280" y="95" text-anchor="start" fill="rgba(255,255,255,0.5)" font-size="10" font-family="Inter">Research</text>
+        <text x="280" y="205" text-anchor="start" fill="rgba(255,255,255,0.5)" font-size="10" font-family="Inter">Communication</text>
+        <text x="160" y="272" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="Inter">Collaboration</text>
+        <text x="38" y="205" text-anchor="end" fill="rgba(255,255,255,0.5)" font-size="10" font-family="Inter">Problem Solving</text>
+        <text x="38" y="95" text-anchor="end" fill="rgba(255,255,255,0.5)" font-size="10" font-family="Inter">Prof. Growth</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Growth chart (SVG line chart) -->
+  <div class="panel">
+    <div class="panel-title">Skill EQ Growth</div>
+    <svg viewBox="0 0 400 220" width="100%" style="padding:8px 0">
+      <defs>
+        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e05a38" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#e05a38" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- Y grid lines -->
+      <line x1="48" y1="20" x2="390" y2="20" stroke="rgba(255,255,255,0.03)"/>
+      <line x1="48" y1="70" x2="390" y2="70" stroke="rgba(255,255,255,0.03)"/>
+      <line x1="48" y1="120" x2="390" y2="120" stroke="rgba(255,255,255,0.03)"/>
+      <line x1="48" y1="170" x2="390" y2="170" stroke="rgba(255,255,255,0.03)"/>
+      <!-- Y labels -->
+      <text x="40" y="24" text-anchor="end" fill="rgba(255,255,255,0.2)" font-size="9" font-family="DM Mono">100</text>
+      <text x="40" y="74" text-anchor="end" fill="rgba(255,255,255,0.2)" font-size="9" font-family="DM Mono">75</text>
+      <text x="40" y="124" text-anchor="end" fill="rgba(255,255,255,0.2)" font-size="9" font-family="DM Mono">50</text>
+      <text x="40" y="174" text-anchor="end" fill="rgba(255,255,255,0.2)" font-size="9" font-family="DM Mono">25</text>
+      <!-- Area -->
+      <path d="M 72,166 L 120,148 L 168,135 L 216,118 L 264,102 L 312,88 L 360,72 L 390,56 L 390,200 L 72,200 Z" fill="url(#areaGrad)"/>
+      <!-- Line -->
+      <polyline points="72,166 120,148 168,135 216,118 264,102 312,88 360,72 390,56" fill="none" stroke="#e05a38" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Dots -->
+      <circle cx="72" cy="166" r="3" fill="#e05a38"/><circle cx="120" cy="148" r="3" fill="#e05a38"/>
+      <circle cx="168" cy="135" r="3" fill="#e05a38"/><circle cx="216" cy="118" r="3" fill="#e05a38"/>
+      <circle cx="264" cy="102" r="3" fill="#e05a38"/><circle cx="312" cy="88" r="3" fill="#e05a38"/>
+      <circle cx="360" cy="72" r="3" fill="#e05a38"/><circle cx="390" cy="56" r="4" fill="#e05a38" stroke="#0a0c10" stroke-width="2"/>
+      <!-- X labels -->
+      <text x="72" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Inter">T1</text>
+      <text x="120" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Inter">T2</text>
+      <text x="168" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Inter">T3</text>
+      <text x="216" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Inter">T4</text>
+      <text x="264" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Inter">T5</text>
+      <text x="312" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Inter">T6</text>
+      <text x="360" y="214" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Inter">T7</text>
+      <text x="390" y="214" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="700" font-family="Inter">T8</text>
+    </svg>
+  </div>
+
+  <!-- Domain Scores -->
+  <div class="panel">
+    <div class="panel-title">Domain Scores</div>
+    <div id="domain-scores"></div>
+  </div>
+
+  <!-- Evidence Distribution + Weight Info -->
+  <div class="panel">
+    <div class="panel-title">Evidence Distribution</div>
+    <div style="display:flex;flex-direction:column;gap:8px" id="evidence-dist"></div>
+    <div style="margin-top:16px;padding:12px 14px;background:rgba(224,90,56,0.04);border-radius:9px;border:1px solid rgba(224,90,56,0.08)">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e05a38" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span style="font-size:11px;font-weight:700;color:var(--accent)">Proficiency Weighting</span>
+      </div>
+      <p style="font-size:10px;color:var(--muted);line-height:1.6">Assessment feedback carries full weight (100%). Work products evaluated against clear rubrics carry 85%. External credentials carry 75%. Self-attested skills carry 45%.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TAB: SKILL DOMAINS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-skills">
+<div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
+  <div class="section-gap" id="domain-cards"></div>
+  <div class="section-gap">
+    <div class="panel">
+      <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:12px">Proficiency Levels</div>
+      <div id="proficiency-legend"></div>
+    </div>
+    <div class="panel">
+      <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:12px">Evidence Weights</div>
+      <div id="weight-explainer"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TAB: EVIDENCE & RATIONALE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-evidence">
+<div style="display:grid;grid-template-columns:260px 1fr;gap:18px">
+  <!-- Skill picker -->
+  <div class="panel" style="max-height:70vh;overflow-y:auto;padding:14px">
+    <div style="font-size:9.5px;font-weight:700;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Select a Skill</div>
+    <div id="skill-picker"></div>
+  </div>
+  <!-- Evidence panel -->
+  <div class="panel" id="evidence-panel">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:380px;color:var(--dim)">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:10px;opacity:0.35"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <div style="font-size:14px;font-weight:600">Select a skill from the left panel</div>
+      <div style="font-size:11px;margin-top:4px;text-align:center;max-width:280px">View the full evidence trail, rationale, rubric references, and weighted calculation for any tracked skill.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TAB: RECOMMENDATIONS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-recs">
+<div class="grid-2" style="margin-bottom:16px">
+  <!-- Balance -->
+  <div class="panel">
+    <div class="panel-title" style="color:var(--orange)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      Skill Balance Analysis
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="padding:11px 13px;background:rgba(235,87,87,0.05);border-radius:9px;border:1px solid rgba(235,87,87,0.08);display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:9.5px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:0.8px">Weakest Domain</div><div style="font-size:13px;font-weight:700;color:var(--red);margin-top:2px">📈 Professional Growth</div></div>
+        <div style="font-size:22px;font-weight:800;color:var(--red);font-family:var(--mono)">69</div>
+      </div>
+      <div style="padding:11px 13px;background:rgba(39,174,96,0.04);border-radius:9px;border:1px solid rgba(39,174,96,0.08);display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:9.5px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:0.8px">Strongest Domain</div><div style="font-size:13px;font-weight:700;color:var(--accent);margin-top:2px">🎨 Design Core</div></div>
+        <div style="font-size:22px;font-weight:800;color:var(--accent);font-family:var(--mono)">78</div>
+      </div>
+      <div style="padding:9px 13px;background:var(--surface);border-radius:9px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--muted)">Domain spread (imbalance)</span>
+        <span style="font-size:15px;font-weight:800;font-family:var(--mono);color:var(--orange)">9 pts</span>
+      </div>
+    </div>
+  </div>
+  <!-- Priority Distribution -->
+  <div class="panel">
+    <div class="panel-title" style="color:var(--accent)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      Priority Distribution
+    </div>
+    <div id="priority-dist"></div>
+  </div>
+</div>
+
+<!-- Quick Wins -->
+<div class="panel callout" style="background:linear-gradient(135deg,rgba(39,174,96,0.05),rgba(45,156,219,0.03));border:1px solid rgba(39,174,96,0.1);margin-bottom:16px">
+  <div class="panel-title" style="color:var(--green)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+    Quick Wins — Fastest Path to a Balanced EQ
+  </div>
+  <p style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:14px">These high-impact, lower-effort actions would give you the most significant Skill EQ improvement in the shortest time.</p>
+  <div class="grid-3" id="quick-wins"></div>
+</div>
+
+<!-- Rec List Preview -->
+<div class="panel">
+  <div class="panel-title" style="color:var(--orange)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+    Personalized Recommendations
+  </div>
+  <div id="rec-list" style="display:flex;flex-direction:column;gap:8px"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TAB: LEARNING PATH -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-progress">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div class="panel" style="max-height:600px;overflow-y:auto">
+    <div class="panel-title">Course Timeline (Standard Path)</div>
+    <div id="course-timeline"></div>
+  </div>
+  <div class="section-gap">
+    <div class="panel">
+      <div class="panel-title">Completion Summary</div>
+      <div class="stats" style="margin-bottom:0">
+        <div class="stat"><div class="stat-label">Completed</div><div class="stat-val" style="color:var(--green)">28</div></div>
+        <div class="stat"><div class="stat-label">In Progress</div><div class="stat-val" style="color:var(--orange)">2</div></div>
+        <div class="stat"><div class="stat-label">Remaining</div><div class="stat-val" style="color:var(--dim)">8</div></div>
+        <div class="stat"><div class="stat-label">Exemplary</div><div class="stat-val" style="color:var(--accent)">8</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Areas of Study</div>
+      <div id="course-types"></div>
+    </div>
+    <div class="panel callout" style="background:linear-gradient(135deg,rgba(224,90,56,0.06),rgba(45,156,219,0.03));border:1px solid rgba(224,90,56,0.1)">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e05a38" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span style="font-size:13px;font-weight:700;font-family:var(--heading)">Projected Growth</span>
+      </div>
+      <p style="font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:12px">Based on current trajectory, your Skill EQ is projected to reach <strong style="color:var(--green)">82-88</strong> at the end of the learning path.</p>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center">
+          <div style="font-size:9.5px;color:var(--dim)">Current</div>
+          <div style="font-size:20px;font-weight:800;color:var(--orange);font-family:var(--mono)">74</div>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        <div style="flex:1;padding:10px;background:rgba(39,174,96,0.06);border-radius:8px;text-align:center;border:1px solid rgba(39,174,96,0.12)">
+          <div style="font-size:9.5px;color:var(--dim)">Projected</div>
+          <div style="font-size:20px;font-weight:800;color:var(--green);font-family:var(--mono)">85</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TAB: METHODOLOGY -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-method">
+<div class="grid-2">
+  <div class="section-gap">
+    <div class="panel" style="padding:22px">
+      <div style="font-family:var(--heading);font-size:15px;font-weight:700;margin-bottom:14px">How Skill EQ Worked</div>
+      <div style="font-size:12.5px;color:rgba(255,255,255,0.58);line-height:1.8">
+        <p style="margin-bottom:12px">The system read <strong style="color:var(--accent)">xAPI statements</strong> stored in a learning record store (LRS) to capture learning activity and evidence as it occurred.</p>
+        <p style="margin-bottom:12px">It mapped each statement to the relevant <strong style="color:var(--text)">skills and competencies</strong>, then assembled those mappings into an individual skill matrix.</p>
+        <p>The dashboard made that matrix visible so learners and staff could see current coverage, gaps, and the next opportunities to build capability.</p>
+      </div>
+    </div>
+    <div class="panel" style="padding:22px">
+      <div style="font-family:var(--heading);font-size:15px;font-weight:700;margin-bottom:14px">From Activity to Next Step</div>
+      <div class="formula">
+        <div style="color:var(--dim)">// Activity is recorded</div>
+        <div style="color:var(--accent)">xAPI statement → LRS</div>
+        <div style="color:var(--dim);margin-top:6px">// Activity is interpreted</div>
+        <div style="color:var(--accent)">statement → skill + competency mapping</div>
+        <div style="color:var(--dim);margin-top:6px">// Learner state is assembled</div>
+        <div style="color:var(--accent)">mapped activity → skill matrix</div>
+        <div style="color:var(--dim);margin-top:6px">// The next action is selected</div>
+        <div style="color:var(--accent)">skill gaps + learner context → recommendation</div>
+      </div>
+    </div>
+  </div>
+  <div class="section-gap">
+    <div class="panel" style="padding:22px">
+      <div style="font-family:var(--heading);font-size:15px;font-weight:700;margin-bottom:14px">Evidence Sources</div>
+      <div id="method-weights"></div>
+    </div>
+    <div class="panel" style="padding:22px">
+      <div style="font-family:var(--heading);font-size:15px;font-weight:700;margin-bottom:14px">Just-in-Time Recommendations</div>
+      <div style="font-size:12.5px;color:rgba(255,255,255,0.58);line-height:1.8">
+        <p style="margin-bottom:12px">The recommendation engine checked the learner's <strong style="color:var(--text)">skill matrix</strong> for gaps and next eligible actions.</p>
+        <p>It surfaced a relevant next step at the point of need, giving learners a practical route to build the skills and competencies their activity had not yet covered.</p>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(155,81,224,0.06),rgba(45,156,219,0.04));border-radius:14px;border:1px solid rgba(155,81,224,0.1);padding:18px">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9b51e0" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span style="font-size:12px;font-weight:700;color:var(--purple)">For Instructors</span>
+      </div>
+      <p style="font-size:11px;color:var(--muted);line-height:1.6">Instructor view includes ability to submit assessment evidence, flag skills for review, adjust inferred proficiency levels, and view aggregate cohort analytics.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- .shell -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DEMO DATA — Sample learning profile
+// ═══════════════════════════════════════════════════════════════
+const DOMAINS = [
+  { id:"design-core", name:"Design Core", icon:"🎨", color:"#e05a38", score:78,
+    skills:[{n:"User Experience (UX) Design",s:82},{n:"User-Centered Design",s:79},{n:"Design Thinking",s:80},{n:"Visual Design",s:76},{n:"Graphic Design",s:73},{n:"Computer-Aided Design",s:71},{n:"Prototyping",s:81},{n:"Design Tool",s:77}]},
+  { id:"research", name:"Research & Insights", icon:"🔍", color:"#2d9cdb", score:72,
+    skills:[{n:"User Research",s:78},{n:"Research",s:74},{n:"Audience Segmentation",s:69},{n:"Sensemaking",s:68},{n:"Analytical Skills",s:72},{n:"Data Analysis",s:70}]},
+  { id:"communication", name:"Communication", icon:"💬", color:"#27ae60", score:76,
+    skills:[{n:"Communication",s:80},{n:"Professional Communication",s:77},{n:"Communication Strategies",s:75},{n:"Storytelling",s:74},{n:"Content Strategy",s:72},{n:"Constructive Feedback",s:78}]},
+  { id:"collaboration", name:"Collaboration & Leadership", icon:"🤝", color:"#9b51e0", score:74,
+    skills:[{n:"Collaboration",s:79},{n:"Collaborative Learning",s:73},{n:"Leadership",s:76},{n:"Emotional Intelligence",s:78},{n:"Empathy",s:77},{n:"Active Listening",s:72},{n:"Cultural Diversity",s:68},{n:"Diversity Awareness",s:69}]},
+  { id:"problem-solving", name:"Problem Solving", icon:"🧩", color:"#f2994a", score:71,
+    skills:[{n:"Problem Solving",s:76},{n:"Creative Problem-Solving",s:73},{n:"Critical Thinking",s:74},{n:"Decision Making",s:70},{n:"Creative Thinking",s:68},{n:"Innovation",s:66},{n:"Systems Thinking",s:69}]},
+  { id:"professional", name:"Professional Growth", icon:"📈", color:"#eb5757", score:69,
+    skills:[{n:"Career Development",s:72},{n:"Professional Development",s:71},{n:"Adaptability",s:74},{n:"Planning",s:66},{n:"Brand Management",s:63},{n:"Electronic Portfolio",s:68},{n:"Experiential Learning",s:67}]},
+  { id:"technology", name:"Technology & AI", icon:"🤖", color:"#00b4d8", score:73,
+    skills:[{n:"Artificial Intelligence (AI)",s:76},{n:"Technology Ethics",s:70}]},
+];
+
+const COURSES = [
+  {code:"C715",title:"Organizational Behavior",t:1,ty:"bus-mgmt",cu:3,s:"done",g:"exemplary"},
+  {code:"D268",title:"Intro to Communication: Connecting with Others",t:1,ty:"gen-ed",cu:3,s:"done",g:"proficient"},
+  {code:"D640",title:"Giving, Receiving and Incorporating Feedback",t:1,ty:"power",cu:3,s:"done",g:"proficient"},
+  {code:"D082",title:"Emotional and Cultural Intelligence",t:1,ty:"bus-core",cu:3,s:"done",g:"exemplary"},
+  {code:"D081",title:"Innovative and Strategic Thinking",t:2,ty:"bus-core",cu:3,s:"done",g:"proficient"},
+  {code:"D651",title:"Foundations of Design",t:2,ty:"design",cu:3,s:"done",g:"proficient"},
+  {code:"D265",title:"Critical Thinking: Reason and Evidence",t:2,ty:"gen-ed",cu:3,s:"done",g:"proficient"},
+  {code:"D641",title:"Adapting to Ambiguity",t:2,ty:"power",cu:3,s:"done",g:"exemplary"},
+  {code:"D653",title:"Empathizing, Defining, and Ideating",t:3,ty:"design",cu:3,s:"done",g:"proficient"},
+  {code:"C483",title:"Principles of Management",t:3,ty:"bus-core",cu:4,s:"done",g:"not-yet"},
+  {code:"D642",title:"Empathy and Inclusive Collaboration",t:3,ty:"power",cu:3,s:"done",g:"proficient"},
+  {code:"D078",title:"Bus. Env. Apps I: Structures & Legal Env.",t:3,ty:"bus-core",cu:2,s:"done",g:"exemplary"},
+  {code:"D388",title:"Fundamentals of Spreadsheets & Data Pres.",t:4,ty:"bus-core",cu:3,s:"done",g:"proficient"},
+  {code:"D774",title:"Introduction to Business Accounting",t:4,ty:"bus-core",cu:3,s:"done",g:"proficient"},
+  {code:"D269",title:"Composition: Writing with a Strategy",t:4,ty:"gen-ed",cu:3,s:"done",g:"proficient"},
+  {code:"D643",title:"Navigating Complex Problems",t:4,ty:"power",cu:3,s:"done",g:"exemplary"},
+  {code:"D459",title:"Intro to Systems Thinking and Applications",t:5,ty:"gen-ed",cu:3,s:"done",g:"proficient"},
+  {code:"D775",title:"Introduction to Business Finance",t:5,ty:"bus-core",cu:3,s:"done",g:"proficient"},
+  {code:"D246",title:"Influential Comm. through Visual Design & Storytelling",t:5,ty:"gen-ed",cu:3,s:"done",g:"exemplary"},
+  {code:"D652",title:"Design Applications",t:5,ty:"design",cu:3,s:"done",g:"proficient"},
+  {code:"D079",title:"Bus. Env. Apps II: Process, Logistics & Ops",t:6,ty:"bus-core",cu:2,s:"done",g:"proficient"},
+  {code:"C458",title:"Health, Fitness, and Wellness",t:6,ty:"gen-ed",cu:4,s:"done",g:"proficient"},
+  {code:"C722",title:"Project Management",t:6,ty:"bus-mgmt",cu:3,s:"done",g:"exemplary"},
+  {code:"C721",title:"Change Management",t:6,ty:"bus-mgmt",cu:3,s:"done",g:"proficient"},
+  {code:"C273",title:"Introduction to Sociology",t:7,ty:"gen-ed",cu:3,s:"done",g:"proficient"},
+  {code:"D077",title:"Concepts in Marketing, Sales & Customer Contact",t:7,ty:"bus-core",cu:3,s:"done",g:"exemplary"},
+  {code:"C165",title:"Integrated Physical Sciences",t:7,ty:"gen-ed",cu:3,s:"done",g:"proficient"},
+  {code:"D654",title:"Prototyping and Iterating I",t:7,ty:"design",cu:3,s:"done",g:"proficient"},
+  {code:"D655",title:"Prototyping and Iterating II",t:8,ty:"design",cu:3,s:"ip",p:0.6},
+  {code:"C955",title:"Applied Probability and Statistics",t:8,ty:"gen-ed",cu:3,s:"ip",p:0.45},
+  {code:"D266",title:"World History: Diverse Cultures & Global Connections",t:8,ty:"gen-ed",cu:3,s:"ns"},
+  {code:"D089",title:"Principles of Economics",t:8,ty:"bus-core",cu:3,s:"ns"},
+  {code:"D351",title:"Functions of Human Resource Management",t:9,ty:"hr",cu:3,s:"ns"},
+  {code:"D656",title:"Leveraging AI and Technology in Design",t:9,ty:"design",cu:3,s:"ns"},
+  {code:"D080",title:"Managing in a Global Business Environment",t:9,ty:"bus-core",cu:3,s:"ns"},
+  {code:"D361",title:"Business Simulation",t:9,ty:"bus-core",cu:4,s:"ns"},
+  {code:"D253",title:"Values-Based Leadership",t:10,ty:"bus-mgmt",cu:3,s:"ns"},
+  {code:"D657",title:"Design Applied Learning Capstone",t:10,ty:"design",cu:3,s:"ns"},
+];
+
+const EVIDENCE = [
+  {name:"Assessment",count:48,color:"#e05a38",weight:"1.00",desc:"Course assessments evaluated by faculty"},
+  {name:"Work Product",count:36,color:"#2d9cdb",weight:"0.85",desc:"Submitted artifacts evaluated against rubrics"},
+  {name:"External Credential",count:14,color:"#27ae60",weight:"0.75",desc:"Industry certifications and badges"},
+  {name:"Self-Attested",count:29,color:"#9b51e0",weight:"0.45",desc:"Skills claimed via resume or profile"},
+];
+
+const TYPE_COLORS = {"bus-mgmt":"#9b51e0","gen-ed":"#6B7280","power":"#f2994a","bus-core":"#2d9cdb","design":"#e05a38","hr":"#27ae60"};
+const TYPE_NAMES = {"bus-mgmt":"Business Management","gen-ed":"General Education","power":"Power Skills","bus-core":"Business Core","design":"Design","hr":"Human Resources"};
+
+const PRIORITIES = [
+  {key:"critical",label:"Critical Gaps",color:"#eb5757",desc:"20+ pts below proficiency target",count:5},
+  {key:"growth",label:"Growth Areas",color:"#f2994a",desc:"10–20 pts below target",count:14},
+  {key:"polish",label:"Refinement",color:"#2d9cdb",desc:"Within 10 pts of target",count:21},
+  {key:"strong",label:"Strengths",color:"#27ae60",desc:"At or above target",count:8},
+];
+
+const QUICK_WINS = [
+  {skill:"Brand Management",score:63,gap:22,action:"Brand Identity System",gain:13,color:"#eb5757"},
+  {skill:"Planning",score:66,gap:19,action:"Project Planning Case Study",gain:11,color:"#f2994a"},
+  {skill:"Innovation",score:66,gap:19,action:"Design Sprint for a Real Problem",gain:14,color:"#f2994a"},
+];
+
+const RECS = [
+  {skill:"Brand Management",domain:"📈 Professional Growth",score:63,gap:22,priority:"critical",color:"#eb5757",dColor:"#eb5757"},
+  {skill:"Planning",domain:"📈 Professional Growth",score:66,gap:19,priority:"growth",color:"#f2994a",dColor:"#eb5757"},
+  {skill:"Innovation",domain:"🧩 Problem Solving",score:66,gap:19,priority:"growth",color:"#f2994a",dColor:"#f2994a"},
+  {skill:"Experiential Learning",domain:"📈 Professional Growth",score:67,gap:18,priority:"growth",color:"#f2994a",dColor:"#eb5757"},
+  {skill:"Audience Segmentation",domain:"🔍 Research & Insights",score:69,gap:16,priority:"growth",color:"#f2994a",dColor:"#2d9cdb"},
+  {skill:"Creative Thinking",domain:"🧩 Problem Solving",score:68,gap:17,priority:"growth",color:"#f2994a",dColor:"#f2994a"},
+  {skill:"Sensemaking",domain:"🔍 Research & Insights",score:68,gap:17,priority:"growth",color:"#f2994a",dColor:"#2d9cdb"},
+];
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════
+function init(){
+  renderDomainScores();
+  renderEvidenceDist();
+  renderDomainCards();
+  renderProfLegend();
+  renderWeights('weight-explainer');
+  renderWeights('method-weights');
+  renderSkillPicker();
+  renderPriorityDist();
+  renderQuickWins();
+  renderRecList();
+  renderTimeline();
+  renderCourseTypes();
+  initTabs();
+}
+
+function renderDomainScores(){
+  const el=document.getElementById('domain-scores');
+  const sorted=[...DOMAINS].sort((a,b)=>b.score-a.score);
+  el.innerHTML=sorted.map(d=>`
+    <div class="domain-row">
+      <span class="domain-icon">${d.icon}</span>
+      <div class="domain-info">
+        <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+          <span class="domain-name">${d.name}</span>
+          <span class="domain-score" style="color:${d.color}">${d.score}</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${d.score}%;background:linear-gradient(90deg,${d.color}88,${d.color})"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderEvidenceDist(){
+  const el=document.getElementById('evidence-dist');
+  const max=Math.max(...EVIDENCE.map(e=>e.count));
+  el.innerHTML=EVIDENCE.map(e=>`
+    <div class="ev-row">
+      <div class="ev-dot" style="background:${e.color}"></div>
+      <span class="ev-label">${e.name}</span>
+      <div class="ev-bar"><div class="ev-bar-fill" style="width:${(e.count/max)*100}%;background:${e.color}"></div></div>
+      <span class="ev-val" style="color:${e.color}">${e.count}</span>
+    </div>
+  `).join('');
+}
+
+function renderDomainCards(){
+  const el=document.getElementById('domain-cards');
+  el.innerHTML=DOMAINS.map((d,idx)=>`
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div style="padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <span style="font-size:20px">${d.icon}</span>
+        <div style="flex:1"><div style="font-weight:700;font-size:13px;font-family:var(--heading)">${d.name}</div><div style="font-size:10px;color:var(--muted);margin-top:1px">${d.skills.length} skills</div></div>
+        <div style="width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:${d.color}15;color:${d.color};font-weight:800;font-size:17px;font-family:var(--mono)">${d.score}</div>
+      </div>
+      <div style="${idx===0?'display:block':'display:none'};padding:0 18px 14px;display:flex;flex-direction:column;gap:5px">
+        ${d.skills.map(sk=>`
+          <div class="skill-item">
+            <span class="skill-name">${sk.n}</span>
+            <div class="skill-bar"><div style="width:${sk.s}%;height:100%;border-radius:3px;background:linear-gradient(90deg,${d.color}88,${d.color})"></div></div>
+            <span class="skill-score" style="color:${d.color}">${sk.s}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderProfLegend(){
+  const levels=[{l:"Exemplary",r:"90–100",c:"#27ae60",d:"Exceeds expectations"},{l:"Proficient",r:"75–89",c:"#2d9cdb",d:"Meets competency requirements"},{l:"Developing",r:"60–74",c:"#f2994a",d:"Approaching proficiency"},{l:"Emerging",r:"1–59",c:"#eb5757",d:"Beginning to demonstrate"}];
+  document.getElementById('proficiency-legend').innerHTML=levels.map((x,i)=>`
+    <div style="display:flex;align-items:center;gap:9px;padding:7px 0;${i<3?'border-bottom:1px solid rgba(255,255,255,0.03)':''}">
+      <div style="width:9px;height:9px;border-radius:3px;background:${x.c};flex-shrink:0"></div>
+      <div><div style="font-size:11.5px;font-weight:700;color:${x.c}">${x.l} <span style="font-weight:400;color:var(--dim)">(${x.r})</span></div><div style="font-size:10px;color:var(--dim)">${x.d}</div></div>
+    </div>
+  `).join('');
+}
+
+function renderWeights(id){
+  document.getElementById(id).innerHTML=`<div style="display:flex;flex-direction:column;gap:7px">${EVIDENCE.map(e=>`
+    <div class="weight-row">
+      <div class="weight-icon" style="background:${e.color}12"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${e.color}" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div style="flex:1"><div style="font-size:11.5px;font-weight:700;color:rgba(255,255,255,0.8)">${e.name}</div><div style="font-size:9.5px;color:var(--muted);margin-top:1px">${e.desc}</div></div>
+      <div class="weight-bar"><div style="width:${parseFloat(e.weight)*100}%;height:100%;background:${e.color};border-radius:3px"></div></div>
+      <span class="weight-pct" style="color:${e.color}">${Math.round(parseFloat(e.weight)*100)}%</span>
+    </div>
+  `).join('')}</div>`;
+}
+
+function renderSkillPicker(){
+  const el=document.getElementById('skill-picker');
+  el.innerHTML=DOMAINS.map(d=>`
+    <div style="margin-bottom:10px">
+      <div style="font-size:9.5px;font-weight:700;color:${d.color};margin-bottom:4px;display:flex;align-items:center;gap:5px"><span>${d.icon}</span>${d.name}</div>
+      ${d.skills.map(sk=>`
+        <div style="padding:6px 10px;margin-bottom:2px;border-radius:6px;display:flex;justify-content:space-between;background:rgba(255,255,255,0.015);cursor:pointer" onmouseover="this.style.background='${d.color}10'" onmouseout="this.style.background='rgba(255,255,255,0.015)'">
+          <span style="font-size:10.5px;color:rgba(255,255,255,0.6)">${sk.n}</span>
+          <span style="font-size:10.5px;font-weight:700;color:${d.color};font-family:var(--mono)">${sk.s}</span>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function renderPriorityDist(){
+  const total=PRIORITIES.reduce((s,p)=>s+p.count,0);
+  document.getElementById('priority-dist').innerHTML=`<div style="display:flex;flex-direction:column;gap:7px">${PRIORITIES.map(p=>{
+    const pct=Math.round(p.count/total*100);
+    return `<div style="display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;background:rgba(255,255,255,0.015)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${p.color};flex-shrink:0"></div>
+      <div style="flex:1"><div style="font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.75)">${p.label}</div><div style="font-size:9.5px;color:var(--dim)">${p.desc}</div></div>
+      <div style="display:flex;align-items:center;gap:5px">
+        <div style="width:36px;height:4px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${p.color};border-radius:2px"></div></div>
+        <span style="font-size:12px;font-weight:800;color:${p.color};font-family:var(--mono);width:22px;text-align:right">${p.count}</span>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderQuickWins(){
+  document.getElementById('quick-wins').innerHTML=QUICK_WINS.map((q,i)=>`
+    <div class="qw">
+      <div class="qw-rank" style="color:var(--green)">#${i+1} Priority</div>
+      <div class="qw-skill">${q.skill}</div>
+      <div class="qw-meta">Current: ${q.score} · Gap: +${q.gap}</div>
+      <div class="qw-action">
+        <div class="qw-action-title">${q.action}</div>
+        <div class="qw-action-gain" style="color:var(--green)">Estimated gain: +${q.gain} pts</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderRecList(){
+  document.getElementById('rec-list').innerHTML=RECS.map(r=>`
+    <div class="rec-card">
+      <div class="rec-header">
+        <div class="rec-priority" style="background:${r.color}"></div>
+        <div class="rec-info">
+          <div class="rec-skill">${r.skill}</div>
+          <div class="rec-domain">${r.domain}</div>
+        </div>
+        <div class="rec-score">
+          <div class="rec-num" style="color:${r.dColor}">${r.score}</div>
+          <div class="rec-gap">gap: +${r.gap}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTimeline(){
+  const el=document.getElementById('course-timeline');
+  const terms=[...new Set(COURSES.map(c=>c.t))].sort((a,b)=>a-b);
+  el.innerHTML=terms.map(t=>{
+    const cs=COURSES.filter(c=>c.t===t);
+    return `<div class="term-group">
+      <div class="term-label">Term ${t}</div>
+      ${cs.map(c=>{
+        const sc=c.s==="done"?"#27ae60":c.s==="ip"?"#f2994a":"rgba(255,255,255,0.18)";
+        const icon=c.s==="done"?`<svg viewBox="0 0 24 24" fill="none" stroke="${sc}" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
+          :c.s==="ip"?`<svg viewBox="0 0 24 24" fill="none" stroke="${sc}" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+          :`<svg viewBox="0 0 24 24" fill="none" stroke="${sc}" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+        const badge=c.g?`<span class="course-badge" style="background:${c.g==='exemplary'?'rgba(39,174,96,0.12)':c.g==='proficient'?'rgba(45,156,219,0.12)':'rgba(235,87,87,0.12)'};color:${c.g==='exemplary'?'#27ae60':c.g==='proficient'?'#2d9cdb':'#eb5757'}">${c.g==='not-yet'?'Retry':c.g}</span>`:'';
+        const prog=c.s==='ip'?`<div style="width:36px;height:4px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden"><div style="width:${(c.p||0)*100}%;height:100%;background:#f2994a;border-radius:2px"></div></div>`:'';
+        return `<div class="course-row" style="border-left:3px solid ${TYPE_COLORS[c.ty]};${c.s==='ns'?'opacity:0.5':''}">
+          ${icon}
+          <div style="flex:1;min-width:0"><div class="course-title">${c.title}</div><span class="course-code">${c.code} · ${c.cu} CU</span></div>
+          ${badge}${prog}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function renderCourseTypes(){
+  const types=["bus-mgmt","gen-ed","power","bus-core","design","hr"];
+  document.getElementById('course-types').innerHTML=types.map(ty=>{
+    const n=COURSES.filter(c=>c.ty===ty).length;
+    return `<div style="display:flex;align-items:center;gap:9px;padding:5px 0">
+      <div style="width:4px;height:14px;border-radius:2px;background:${TYPE_COLORS[ty]}"></div>
+      <span style="font-size:11px;color:rgba(255,255,255,0.65);flex:1">${TYPE_NAMES[ty]}</span>
+      <span style="font-size:12px;font-weight:700;color:${TYPE_COLORS[ty]};font-family:var(--mono)">${n}</span>
+    </div>`;
+  }).join('');
+}
+
+// Tab switching
+function initTabs(){
+  document.querySelectorAll('.tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>

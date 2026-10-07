@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A.J. Merlino's academic leadership record: building Music Industry Studies and connecting students to live production work." />
+    <title>Building Music Industry Studies | A.J. Merlino</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&amp;display=swap" rel="stylesheet" />
+    <style>
+      :root { --ink: #10120f; --moss: #30372d; --lichen: #a7b58a; --lichen-bright: #c9d5a9; --parchment: #f4f0e7; --fog: #b7b5aa; --line: rgba(244, 240, 231, 0.16); --display: "DM Sans", Arial, sans-serif; --mono: "DM Mono", ui-monospace, monospace; --curve: cubic-bezier(0.16, 1, 0.3, 1); }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; background: var(--ink); }
+      body { min-width: 320px; margin: 0; background: var(--ink); color: var(--parchment); font-family: var(--display); }
+      a { color: inherit; text-decoration: none; }
+      :focus-visible { outline: 2px solid var(--lichen-bright); outline-offset: 5px; }
+      .skip { position: fixed; z-index: 30; top: 1rem; left: 50%; padding: 0.7rem 0.9rem; transform: translate(-50%, -180%); background: var(--parchment); color: var(--ink); font: 0.7rem var(--mono); transition: transform 180ms var(--curve); }
+      .skip:focus { transform: translate(-50%, 0); }
+      .portfolio-nav { position: sticky; z-index: 10; top: 0; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 68px; padding: 0 clamp(1.25rem, 4vw, 4.6rem); border-bottom: 1px solid rgba(244, 240, 231, 0.1); background: rgba(16, 18, 15, 0.94); backdrop-filter: blur(14px); }
+      .portfolio-nav__wordmark, .portfolio-nav__links, .eyebrow, .meta dt, .metric__number, .case-link, .footer { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.11em; line-height: 1.35; text-transform: uppercase; }
+      .portfolio-nav__wordmark { font-size: 0.82rem; font-weight: 500; letter-spacing: 0.14em; }
+      .portfolio-nav__links { display: flex; gap: clamp(0.75rem, 1.6vw, 1.75rem); color: rgba(244, 240, 231, 0.76); }
+      .portfolio-nav__links a { transition: color 180ms ease; }
+      .portfolio-nav__links a:hover, .portfolio-nav__links a:focus-visible { color: var(--lichen-bright); }
+      .portfolio-nav__spacer { justify-self: end; width: 1px; height: 1px; }
+      main { overflow: hidden; }
+      .hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(14rem, 0.78fr); min-height: calc(100svh - 68px); padding: clamp(7rem, 12vw, 11rem) clamp(1.25rem, 8vw, 9.5rem) clamp(4rem, 7vw, 7rem); background: linear-gradient(124deg, #171b15 0%, #10120f 53%, #263021 100%); }
+      .hero::after { position: absolute; right: -18vw; bottom: -18vw; width: min(68vw, 60rem); aspect-ratio: 1; border: 1px solid rgba(201, 213, 169, 0.18); border-radius: 50%; box-shadow: 0 0 0 4rem rgba(201, 213, 169, 0.025), 0 0 0 10rem rgba(201, 213, 169, 0.018); content: ""; pointer-events: none; }
+      .hero__content { position: relative; z-index: 1; align-self: end; max-width: 55rem; }
+      .eyebrow { margin: 0 0 1.4rem; color: var(--lichen); }
+      h1, h2, h3, p, dl { margin-top: 0; }
+      h1, h2, h3 { font-weight: 300; letter-spacing: -0.045em; }
+      h1 { max-width: 10ch; margin-bottom: 2rem; font-size: clamp(4.3rem, 9.3vw, 10.4rem); line-height: 0.88; }
+      .hero__lede { max-width: 41rem; margin-bottom: 0; color: rgba(244, 240, 231, 0.8); font-size: clamp(1.1rem, 1.65vw, 1.4rem); font-weight: 300; line-height: 1.55; }
+      .hero__facts { position: relative; z-index: 1; align-self: end; display: grid; gap: 1.25rem; max-width: 19rem; margin: 0; padding: 0; }
+      .hero__facts div { padding-top: 1rem; border-top: 1px solid var(--line); }
+      .hero__facts dt { margin-bottom: 0.45rem; color: var(--lichen); font: 0.63rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
+      .hero__facts dd { margin: 0; color: rgba(244, 240, 231, 0.78); font-size: 0.97rem; line-height: 1.45; }
+      .section { padding: clamp(7rem, 14vw, 13rem) clamp(1.25rem, 8vw, 9.5rem); }
+      .intro { display: grid; grid-template-columns: minmax(13rem, 0.7fr) minmax(20rem, 1.3fr); gap: clamp(3rem, 12vw, 14rem); border-top: 1px solid var(--line); }
+      .intro h2, .chapter h2 { max-width: 9.4ch; margin-bottom: 0; font-size: clamp(3.2rem, 6.6vw, 7.5rem); line-height: 0.92; }
+      .intro__copy { max-width: 43rem; }
+      .intro__copy p { margin-bottom: 1.25rem; color: rgba(244, 240, 231, 0.8); font-size: clamp(1.1rem, 1.55vw, 1.32rem); font-weight: 300; line-height: 1.65; }
+      .intro__copy p:last-child { margin-bottom: 0; color: var(--lichen-bright); }
+      .chapter { display: grid; grid-template-columns: minmax(16rem, 0.9fr) minmax(20rem, 1.1fr); gap: clamp(3rem, 10vw, 12rem); background: #1a1e18; }
+      .chapter__content { display: grid; gap: 0; padding-top: clamp(4rem, 8vw, 7rem); }
+      .chapter__item { display: grid; grid-template-columns: minmax(5.5rem, 0.4fr) minmax(0, 1.6fr); gap: clamp(1.25rem, 3vw, 3rem); padding: 2.05rem 0; border-top: 1px solid var(--line); }
+      .chapter__item:first-child { border-top-color: rgba(201, 213, 169, 0.4); }
+      .chapter__number { margin: 0; color: var(--lichen-bright); font: 0.82rem var(--mono); letter-spacing: 0.08em; }
+      .chapter__item h3 { margin-bottom: 0.7rem; font-size: clamp(1.45rem, 2.3vw, 2rem); line-height: 1.02; }
+      .chapter__item p:last-child { max-width: 34rem; margin-bottom: 0; color: rgba(244, 240, 231, 0.74); font-weight: 300; line-height: 1.58; }
+      .fieldwork { display: grid; grid-template-columns: minmax(14rem, 0.8fr) minmax(23rem, 1.2fr); gap: clamp(3rem, 10vw, 12rem); }
+      .fieldwork__intro h2 { max-width: 8.8ch; margin-bottom: 1.5rem; font-size: clamp(3.2rem, 6.4vw, 7.2rem); line-height: 0.92; }
+      .fieldwork__intro p:last-child { max-width: 29rem; margin: 0; color: rgba(244, 240, 231, 0.74); font-size: 1.05rem; font-weight: 300; line-height: 1.58; }
+      .pathway { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); }
+      .pathway__node { min-height: 13.25rem; padding: clamp(1.35rem, 3vw, 2.3rem); border-bottom: 1px solid var(--line); }
+      .pathway__node:nth-child(odd) { border-right: 1px solid var(--line); }
+      .pathway__node:nth-last-child(-n + 2) { border-bottom: 0; }
+      .pathway__node--center { position: relative; background: var(--lichen-bright); color: var(--ink); }
+      .pathway__node--center::after { position: absolute; right: 1.5rem; bottom: 1.2rem; color: rgba(16, 18, 15, 0.48); font: 0.65rem var(--mono); letter-spacing: 0.08em; content: "HU PRESENTS"; }
+      .pathway__label { margin-bottom: 1rem; color: var(--lichen); font: 0.64rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
+      .pathway__node--center .pathway__label { color: rgba(16, 18, 15, 0.6); }
+      .pathway__node h3 { margin-bottom: 0.75rem; font-size: clamp(1.35rem, 2vw, 1.85rem); line-height: 1.04; }
+      .pathway__node p:last-child { max-width: 18rem; margin-bottom: 0; color: rgba(244, 240, 231, 0.72); font-weight: 300; line-height: 1.52; }
+      .pathway__node--center p:last-child { color: rgba(16, 18, 15, 0.74); }
+      .outcome { display: grid; grid-template-columns: minmax(20rem, 0.9fr) minmax(15rem, 1.1fr); gap: clamp(3rem, 8vw, 10rem); align-items: end; background: var(--parchment); color: var(--ink); }
+      .outcome h2 { max-width: 11ch; margin-bottom: 0; font-size: clamp(3.2rem, 6.5vw, 7.6rem); line-height: 0.92; }
+      .outcome p { max-width: 35rem; margin-bottom: 0; color: rgba(16, 18, 15, 0.75); font-size: clamp(1.12rem, 1.55vw, 1.35rem); font-weight: 300; line-height: 1.62; }
+      .case-link { display: inline-flex; gap: 0.55rem; align-items: center; margin-top: 2rem; color: var(--moss); transition: color 180ms ease, transform 180ms var(--curve); }
+      .case-link:hover, .case-link:focus-visible { color: var(--ink); transform: translateX(0.28rem); }
+      .footer { display: flex; justify-content: space-between; gap: 1rem; padding: 1.8rem clamp(1.25rem, 4vw, 4.6rem); color: rgba(244, 240, 231, 0.42); }
+      @media (max-width: 760px) {
+        .portfolio-nav { grid-template-areas: "mark spacer" "links links"; grid-template-columns: 1fr auto; row-gap: 0.65rem; min-height: 0; padding: 1rem 1.25rem 0.85rem; }
+        .portfolio-nav__wordmark { grid-area: mark; }
+        .portfolio-nav__links { grid-area: links; justify-content: space-between; gap: 0.4rem; font-size: 0.54rem; }
+        .portfolio-nav__spacer { grid-area: spacer; }
+        .hero, .intro, .chapter, .fieldwork, .outcome { display: block; }
+        .hero { min-height: calc(100svh - 91px); padding-top: 8rem; }
+        .hero__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; margin-top: 4rem; }
+        .hero__facts div:last-child { grid-column: 1 / -1; }
+        .intro__copy, .chapter__content, .pathway { margin-top: 4rem; }
+        .chapter__item { grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1rem; }
+        .fieldwork__intro { margin-bottom: 4rem; }
+        .pathway__node { min-height: 11.5rem; padding: 1.3rem; }
+        .outcome p { margin-top: 2rem; }
+        .footer { display: block; }
+        .footer span { display: block; }
+        .footer span + span { margin-top: 0.45rem; }
+      }
+      @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#case-study">Skip to program record</a>
+    <nav class="portfolio-nav" aria-label="Portfolio navigation">
+      <a class="portfolio-nav__wordmark" href="../../index.html#top" aria-label="A.J. Merlino home">A.J. Merlino</a>
+      <div class="portfolio-nav__links">
+        <a href="../about.html#bio">About</a>
+        <a href="../../index.html#leadership">Leadership</a>
+        <a href="../../index.html#work">Design</a>
+        <a href="../../index.html#music">Music</a>
+        <a href="../../index.html#contact">Contact</a>
+      </div>
+      <span class="portfolio-nav__spacer" aria-hidden="true"></span>
+    </nav>
+
+    <main id="case-study">
+      <section class="hero" aria-labelledby="case-title">
+        <div class="hero__content">
+          <p class="eyebrow">Academic leadership record</p>
+          <h1 id="case-title">Building Music Industry Studies.</h1>
+          <p class="hero__lede">A program built around the idea that students should have room to develop an artistic practice—and a real way to carry it into professional life.</p>
+        </div>
+        <dl class="hero__facts" aria-label="Program record facts">
+          <div><dt>Program</dt><dd>Music Industry Studies, Albright College</dd></div>
+          <div><dt>Growth</dt><dd>12 to 75 students in five years</dd></div>
+          <div><dt>Extension</dt><dd>Live-production learning through HU Presents</dd></div>
+        </dl>
+      </section>
+
+      <section class="section intro" aria-labelledby="premise-title">
+        <div><p class="eyebrow">The premise</p><h2 id="premise-title">An arts program needs a life beyond the classroom.</h2></div>
+        <div class="intro__copy">
+          <p>I launched and led Music Industry Studies at Albright College as a program that treated creative work and professional preparation as connected responsibilities. Students needed more than a set of courses; they needed a way to understand the field, build relationships, and see where their own interests could lead.</p>
+          <p>The program brought curriculum, performance and production, mentorship, and industry connection into the same conversation. The result was a major that grew from 12 to 75 students in five years.</p>
+          <p>That work carried forward at Harrisburg University, where I connected academic programs to the professional work happening around the university's concert series.</p>
+        </div>
+      </section>
+
+      <section class="section chapter" aria-labelledby="albright-title">
+        <div><p class="eyebrow">Albright College</p><h2 id="albright-title">Build the program around the field.</h2></div>
+        <div class="chapter__content">
+          <article class="chapter__item"><p class="chapter__number">01</p><div><h3>Program and faculty leadership</h3><p>I led the major, its curriculum, and a faculty community that included full-time and adjunct instructors. The work meant aligning creative, technical, and business learning without losing sight of the students behind the enrollment numbers.</p></div></article>
+          <article class="chapter__item"><p class="chapter__number">02</p><div><h3>Industry relationships with a purpose</h3><p>Relationships with Atlantic Records, Warner Music Group, Universal Music Publishing, ASM Global, and Live Nation gave students a clearer view of the field and brought outside expertise into the life of the program.</p></div></article>
+          <article class="chapter__item"><p class="chapter__number">03</p><div><h3>A forum for the larger conversation</h3><p>I created the Music Business Forum to put students in conversation with practitioners and ideas shaping the industry. It made professional life visible without treating one career path as the only measure of a music education.</p></div></article>
+        </div>
+      </section>
+
+      <section class="section fieldwork" aria-labelledby="hu-title">
+        <div class="fieldwork__intro">
+          <p class="eyebrow">Harrisburg University</p>
+          <h2 id="hu-title">Put students where the work is happening.</h2>
+          <p>At Harrisburg University, I used HU Presents—the university concert series—to connect institutional goals with the working ecology of live production.</p>
+        </div>
+        <div class="pathway" aria-label="HU Presents collaboration map">
+          <article class="pathway__node"><p class="pathway__label">Academic programs</p><h3>Audio Engineering and UX Design</h3><p>Students in Audio Engineering and UX Design, particularly those focused on Advanced Media Production, brought classroom knowledge into a live setting.</p></article>
+          <article class="pathway__node"><p class="pathway__label">Professional partners</p><h3>Venues, union, and talent buying</h3><p>I worked with local venues, the local union, and our talent buyer to align the concert series with both the institution and the realities of the field.</p></article>
+          <article class="pathway__node pathway__node--center"><p class="pathway__label">The shared setting</p><h3>HU Presents</h3><p>The concert series became a place where institutional programming and hands-on learning could support one another.</p></article>
+          <article class="pathway__node"><p class="pathway__label">Student opportunity</p><h3>Work alongside professionals</h3><p>Students gained opportunities to work with the professionals responsible for bringing a live event to an audience, making the standards and collaboration of the field tangible.</p></article>
+        </div>
+      </section>
+
+      <section class="section outcome" aria-labelledby="outcome-title">
+        <div><p class="eyebrow">Why it matters</p><h2 id="outcome-title">Creative education should make more possible.</h2></div>
+        <div><p>For me, post-graduate outcomes are not a reason to narrow arts education. They are evidence that a program has taken students' ambitions seriously. The work is to create the conditions where students can deepen their practice, understand the worlds their work moves through, and leave with relationships and experience they can use.</p><a class="case-link" href="../../index.html#leadership">Return to leadership <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </main>
+
+    <footer class="footer"><span>A.J. Merlino</span><span>Arts leadership and creative practice</span></footer>
+  </body>
+</html>

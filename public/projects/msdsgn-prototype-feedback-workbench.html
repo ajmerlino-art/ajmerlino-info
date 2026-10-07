@@ -1,0 +1,492 @@
+<!doctype html>
+<!-- Created by A.J. Merlino. Embeddable demo of the Prototype Feedback Workbench. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="An interactive portfolio reconstruction of a deployed formative-design tool that gives master's students synthetic user-testing data to inform their next design revision." />
+<title>Prototype Feedback Workbench | A.J. Merlino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{color-scheme:light;--paper:#f4f9fd;--surface:#fff;--soft:#f8fbfe;--ink:#0d3a5c;--body:#34526b;--muted:#5d7488;--line:#dbe7f0;--accent:#1f82c4;--accent-soft:#e4f2fc;--accent-line:#b8dbf3;--sky:#46b1ef;--green:#5fa82f;--green-soft:#edf7e5;--green-ink:#2f6419;--sun:#fff6dc;--sun-ink:#7a5600}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Manrope,"Helvetica Neue",Arial,sans-serif}
+button{font:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.45}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.demo{max-width:960px;margin:0 auto;padding:16px}
+.project-intro{display:grid;grid-template-columns:48px minmax(0,1fr);gap:15px;margin:22px 4px 18px;max-width:720px}
+.signature-mark{display:grid;place-items:center;width:44px;height:44px;border:1.5px solid var(--ink);border-radius:12px;background:var(--surface);font:800 15px/1 "DM Mono",ui-monospace,monospace;letter-spacing:-.12em;color:var(--ink)}
+.project-kicker{margin:0 0 4px;color:var(--accent);font:500 10px "DM Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+.project-intro h1{margin:0;font-size:clamp(25px,4vw,37px);line-height:1.05;letter-spacing:-.04em}
+.project-intro p:last-child{margin:8px 0 0;color:var(--body);font-size:14px;line-height:1.55}
+.frame{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 1px 2px rgba(13,58,92,.05),0 10px 28px rgba(13,58,92,.08);overflow:hidden}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#e4f2fc,#f1f9ec)}
+.bar .name{margin:0;display:flex;align-items:center;gap:22px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.bar .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:13px 0 0 var(--sky)}
+.pill{padding:3px 10px;border-radius:999px;background:var(--sun);color:var(--sun-ink);font:500 10px "DM Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase}
+.stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0;padding:0;list-style:none;border-bottom:1px solid var(--line)}
+.stepper button{width:100%;display:flex;align-items:center;gap:8px;padding:12px 14px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font-size:13px;font-weight:700;text-align:left}
+.stepper b{display:inline-grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;background:var(--line);color:var(--ink);font-size:11px}
+.stepper button[aria-current="step"]{color:var(--ink);border-bottom-color:var(--accent)}
+.stepper button[aria-current="step"] b{background:var(--accent);color:#fff}
+.stepper button.done b{background:var(--green-soft);color:var(--green-ink)}
+.stage{padding:20px 22px;min-height:430px}
+.eyebrow{margin:0;color:var(--accent);font:500 10px "DM Mono",ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase}
+h2{margin:4px 0 6px;font-size:clamp(20px,2.6vw,26px);line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
+h3{margin:0 0 6px;font-size:15px}
+.lede{margin:0 0 16px;color:var(--body);font-size:14px;line-height:1.6;max-width:640px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.opt{display:flex;flex-direction:column;gap:6px;padding:10px;border:1.5px solid var(--line);border-radius:12px;background:var(--soft);text-align:left;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--accent-line)}
+.opt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);background:#fff}
+.thumb{aspect-ratio:4/3;max-width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}
+.thumb svg{display:block;width:100%;height:100%}
+.thumb.up{display:grid;place-items:center;background:repeating-linear-gradient(45deg,#f8fbfe,#f8fbfe 10px,#eef6fc 10px,#eef6fc 20px);color:var(--accent);font-size:30px}
+.opt strong{font-size:13px;line-height:1.3}
+.opt small{color:var(--muted);font-size:11px;line-height:1.4}
+.tag{align-self:flex-start;padding:2px 7px;border-radius:999px;background:var(--green-soft);color:var(--green-ink);font:500 9px "DM Mono",ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase}
+.tag.blue{background:var(--accent-soft);color:var(--accent)}
+.profile{display:grid;grid-template-columns:minmax(0,230px) 1fr;gap:18px;align-items:start}
+.img{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.img svg{display:block;width:100%;height:auto}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.facts p{margin:0;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--soft);display:grid;gap:2px}
+.facts strong{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.facts span{font-size:14px;font-weight:800;text-transform:capitalize}
+ul.tp{margin:0;padding-left:18px}
+ul.tp li{margin:0 0 8px;color:var(--body);font-size:13px;line-height:1.5}
+.signal{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:999px;font:500 9px "DM Mono",ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;vertical-align:1px}
+.signal.visible_support{background:var(--green-soft);color:var(--green-ink)}
+.signal.potential_friction{background:var(--sun);color:var(--sun-ink)}
+.signal.not_shown{background:#f0f3f6;color:var(--muted);border:1px dashed #c6d3de}
+.setup{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.field .lbl{margin:0 0 6px;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.field .val{margin:0;font-size:15px;font-weight:800}
+.field .note{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.45}
+.checks{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.checks li{display:flex;gap:8px;align-items:center;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:13px}
+.checks li.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--ink);font-weight:700}
+.checks li::before{content:"";width:14px;height:14px;border-radius:3px;border:1.5px solid #9fb3c3;background:#fff;flex:none}
+.checks li.on::before{border-color:var(--accent);background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 7.5l2.5 2.5L11 4.5' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E") center/12px no-repeat}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--soft)}
+.kpi span{display:block;color:var(--muted);font-size:11px;font-weight:700}
+.kpi strong{display:block;margin-top:2px;font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi.id strong{font:600 16px "DM Mono",ui-monospace,monospace;margin-top:6px}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;min-width:640px;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;color:var(--body)}
+th{background:var(--accent-soft);color:var(--ink);font-size:11px;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.quote{margin:12px 0 0;padding:10px 14px;border-left:3px solid var(--green);background:var(--green-soft);border-radius:0 10px 10px 0;color:var(--body);font-size:13px;line-height:1.5}
+.quote cite{display:block;margin-top:4px;color:var(--green-ink);font:10px "DM Mono",ui-monospace,monospace;font-style:normal}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 22px;border-top:1px solid var(--line);background:var(--soft)}
+.nav .note{margin:0;color:var(--muted);font-size:11px;line-height:1.45;max-width:520px}
+.btns{display:flex;gap:8px}
+.btn{padding:9px 16px;border-radius:999px;font-size:13px;font-weight:800;border:1.5px solid var(--accent-line);background:#fff;color:var(--accent)}
+.btn.primary{border-color:var(--accent);background:var(--accent);color:#fff}
+.credit{margin:10px 4px 0;color:var(--muted);font-size:11px;line-height:1.5;text-align:center}
+.fade{animation:fade .25s ease}
+@keyframes fade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (max-width:760px){.cards{grid-template-columns:repeat(2,1fr)}.profile,.setup{grid-template-columns:1fr}.profile .img{max-width:300px}.kpis{grid-template-columns:repeat(2,1fr)}.facts{grid-template-columns:repeat(2,1fr)}.stepper button span{display:none}.stepper button{justify-content:center}.stage{padding:16px}.project-intro{grid-template-columns:40px minmax(0,1fr);margin:18px 2px}.signature-mark{width:38px;height:38px}}
+@media (prefers-reduced-motion: reduce){.fade{animation:none}}
+</style>
+</head>
+<body>
+<style>
+  .portfolio-nav{position:sticky;top:0;z-index:10000;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:68px;padding:0 clamp(20px,4vw,56px);background:rgba(16,18,15,.94);border-bottom:1px solid rgba(244,240,231,.1);backdrop-filter:blur(14px);color:#f4f0e7;font-family:"DM Mono",ui-monospace,monospace}
+  .portfolio-nav__wordmark{justify-self:start;color:#f4f0e7;text-decoration:none;font-size:.82rem;font-weight:500;letter-spacing:.14em;line-height:1.35;text-transform:uppercase}.portfolio-nav__links{display:flex;gap:clamp(12px,1.8vw,30px);align-items:center;font-size:.7rem;letter-spacing:.11em;line-height:1.35;text-transform:uppercase}.portfolio-nav__links a{color:rgba(244,240,231,.76);text-decoration:none;transition:color 180ms ease}.portfolio-nav__links a:hover,.portfolio-nav__links a:focus-visible{color:#b7c995}.portfolio-nav__spacer{justify-self:end;width:1px;height:1px}
+  @media(max-width:760px){.portfolio-nav{grid-template-areas:"mark spacer" "links links";grid-template-columns:1fr auto;row-gap:10px;min-height:0;padding:15px 20px 13px}.portfolio-nav__wordmark{grid-area:mark}.portfolio-nav__links{grid-area:links;justify-content:space-between;gap:8px;font-size:.54rem}.portfolio-nav__spacer{grid-area:spacer}}
+</style>
+<nav class="portfolio-nav" aria-label="Portfolio navigation">
+  <a class="portfolio-nav__wordmark" href="../../index.html#top" aria-label="A.J. Merlino home">A.J. Merlino</a>
+  <div class="portfolio-nav__links"><a href="../about.html#bio">About</a><a href="../../index.html#leadership">Leadership</a><a href="../../index.html#work">Design</a><a href="../../index.html#music">Music</a><a href="../../index.html#contact">Contact</a></div>
+  <span class="portfolio-nav__spacer" aria-hidden="true"></span>
+</nav>
+<div class="demo">
+  <section class="project-intro" aria-labelledby="project-title">
+    <span class="signature-mark" aria-hidden="true">A.J.</span>
+    <div>
+      <p class="project-kicker">Interactive portfolio demonstration</p>
+      <h1 id="project-title">Prototype Feedback Workbench</h1>
+      <p><strong>Purpose:</strong> make formative UX testing available earlier in a master's-level design course. Students submit early wireframes, receive structured synthetic user-testing data from multiple user perspectives, analyze the patterns, and use the evidence to decide what to revise or test next.<br /><br /><strong>My role:</strong> Product design, UX and learning experience design, feedback framework, synthetic-user workflow, and integration into the student design process.<br /><br /><strong>Portfolio note:</strong> The interface shown here is a wireframe recreation of a deployed system. It preserves the core workflow and interaction model while removing proprietary data, branding, and production details.</p>
+    </div>
+  </section>
+  <div class="frame" role="region" aria-label="Prototype Feedback Workbench demo">
+    <div class="bar"><p class="name"><span class="dot" aria-hidden="true"></span><span>A.J. Merlino / Prototype Feedback Workbench</span></p><span class="pill">Portfolio demonstration / synthetic user-testing data</span></div>
+    <ol class="stepper" id="stepper"></ol>
+    <div class="stage" id="stage" aria-live="polite"></div>
+    <div class="nav"><p class="note">A master's-level exercise: students turn an uploaded prototype into a unique synthetic user-testing dataset, analyze it, and propose an evidence-based design change. The records simulate user testing; they are not real-user research.</p><div class="btns"><button class="btn" id="back" type="button">Back</button><button class="btn primary" id="next" type="button">Next</button></div></div>
+  </div>
+  <p class="credit">Created by A.J. Merlino. Example wireframes are original illustrations.</p>
+</div>
+<script>
+// Created by A.J. Merlino.
+(function attachMSDSGNDataEngine(global) {
+  const contexts = {
+    product: { label: "Digital product", organization: "Juniper Financial", task: "update a recurring-payment preference", participant: "Account holders", stakeholder: "Morgan Reyes", role: "Product Director", decision: "Prioritize the next account-management release", goal: "keep a payment preference current without calling support", stages: ["Open account settings", "Find payment preferences", "Select a new option", "Review confirmation"], channels: ["web", "mobile app", "support chat"], roleFamily: "Product and digital product leadership" },
+    ux: { label: "Digital experience", organization: "Pathway Learning Network", task: "complete a learning-pathway application", participant: "Prospective learners", stakeholder: "Taylor Okafor", role: "Digital Experience Lead", decision: "Improve the application experience before enrollment season", goal: "understand pathway fit and submit an application with confidence", stages: ["Explore pathways", "Compare requirements", "Start application", "Confirm submission"], channels: ["web", "mobile web", "admissions phone"], roleFamily: "UX and digital experience" },
+    industrial: { label: "Connected product", organization: "Lumen Home", task: "set up a connected air-quality monitor", participant: "New device owners", stakeholder: "Devon Shah", role: "Innovation Portfolio Lead", decision: "Reduce setup failure before the next device release", goal: "get the device working and understand its air-quality reading", stages: ["Unbox device", "Connect to home network", "Calibrate sensor", "Interpret reading"], channels: ["device display", "mobile companion app", "phone support"], roleFamily: "Physical product and industrial innovation" },
+    service: { label: "Service experience", organization: "Crestline Conference Hotel", task: "change an event registration and arrival request", participant: "Conference guests", stakeholder: "Avery Morgan", role: "Guest Experience Director", decision: "Improve arrival and registration service before the next event", goal: "update plans and arrive prepared without repeated contacts", stages: ["Review registration", "Update arrival request", "Receive confirmation", "Prepare for arrival"], channels: ["guest portal", "mobile web", "event service desk"], roleFamily: "Service event and experience leadership" },
+    custom: { label: "Submitted prototype", channels: ["uploaded prototype"], roleFamily: "Student-defined design context" }
+  };
+  const priorities = { access: { label: "Accessibility and trust", clarity: -0.15, barrier: 0.18, contact: 0.02 }, cost: { label: "Repeat-contact cost", clarity: -0.08, barrier: 0.05, contact: 0.11 }, speed: { label: "Speed of resolution", clarity: 0.02, barrier: 0.08, contact: 0.07 }, neutral: { label: "No preset business priority", clarity: 0, barrier: 0, contact: 0 } };
+  const audiences = {
+    core: { label: "New or infrequent task users", profileKey: "mixed", note: "People encountering this task for the first time or after a long gap.", segment: "new or infrequent task users", segments: [{ label: "First-time user", clarityShift: -0.08 }, { label: "Returning after a long gap", clarityShift: -0.02 }, { label: "Low-confidence digital user", clarityShift: -0.12, supportShift: 0.07 }] },
+    returning: { label: "Returning or experienced users", profileKey: "mixed", note: "People who have completed a similar task before and bring prior expectations to the flow.", segment: "returning or experienced users", segments: [{ label: "Frequent user", clarityShift: 0.1 }, { label: "Occasional user", clarityShift: 0.03 }, { label: "Experienced user with changed expectations", clarityShift: -0.03, supportShift: 0.02 }] },
+    assistive: { label: "Keyboard and screen-reader users", profileKey: "assistive", note: "People who use keyboard navigation or a screen reader while completing the task. The access method alone does not imply a barrier.", segment: "keyboard and screen-reader users", segments: [{ label: "Keyboard-first user" }, { label: "Screen-reader user" }, { label: "Uses multiple assistive tools" }] },
+    mobile: { label: "Mobile and low-bandwidth users", profileKey: "mobile", note: "People using a mobile device or a constrained connection while completing the task.", segment: "mobile and low-bandwidth users", segments: [{ label: "Mobile-primary user", clarityShift: -0.02 }, { label: "Constrained-connection user", clarityShift: -0.12, supportShift: 0.06 }, { label: "Completing task while mobile", clarityShift: -0.08, supportShift: 0.03 }] },
+    time: { label: "Time-pressured or high-stakes users", profileKey: "mixed", note: "People completing the task under time pressure or where an incorrect result has meaningful consequences.", segment: "time-pressured or high-stakes users", supportShift: 0.07, clarityShift: -0.06, segments: [{ label: "Time-pressured user", clarityShift: -0.08, supportShift: 0.05 }, { label: "High-consequence decision maker", clarityShift: -0.1, supportShift: 0.08 }, { label: "Interrupted user", clarityShift: -0.06, supportShift: 0.04 }] },
+    proxy: { label: "Proxy or limited-information users", profileKey: "mixed", note: "People completing the task for someone else or without all the information or authority they need.", segment: "proxy or limited-information users", supportShift: 0.12, clarityShift: -0.08, segments: [{ label: "Completing task for another person", clarityShift: -0.1, supportShift: 0.09 }, { label: "Needs support to confirm outcome", clarityShift: -0.12, supportShift: 0.12 }, { label: "Has authority or information limits", clarityShift: -0.07, supportShift: 0.06 }] }
+  };
+  const profiles = { mixed: { label: "Mixed access needs", access: "mixed access contexts", barrier: 0.08, device: ["desktop", "mobile", "tablet"] }, assistive: { label: "Keyboard and screen-reader access", access: "keyboard or screen-reader use", barrier: 0.08, device: ["desktop", "tablet"] }, mobile: { label: "Mobile and low-bandwidth access", access: "mobile or constrained connection", barrier: 0.1, device: ["mobile", "mobile", "tablet"] } };
+  const prototypeLibrary = {
+    pathway: { label: "Learning pathway application", description: "A mid-fidelity flow for comparing options and submitting a learning-pathway application.", contextKey: "ux", priorityKey: "access", audienceKey: "core", fidelity: "mid", flowKey: "application", artifact: { taskPath: "mixed", decisionLoad: "high", confirmation: "partial", accessSupport: "partial" } },
+    appointment: { label: "Care appointment change", description: "A mid-fidelity mobile flow for changing an appointment and confirming next steps.", contextKey: "service", priorityKey: "speed", audienceKey: "proxy", fidelity: "mid", flowKey: "scheduling", artifact: { taskPath: "clear", decisionLoad: "moderate", confirmation: "clear", accessSupport: "partial" } },
+    account: { label: "Payment preference settings", description: "A low-fidelity account-management flow for finding and updating a recurring-payment preference.", contextKey: "product", priorityKey: "cost", audienceKey: "returning", fidelity: "low", flowKey: "account", artifact: { taskPath: "mixed", decisionLoad: "moderate", confirmation: "missing", accessSupport: "unknown" } },
+    monitor: { label: "Connected monitor setup", description: "A mid-fidelity companion-app flow for setting up a connected air-quality monitor.", contextKey: "industrial", priorityKey: "access", audienceKey: "mobile", fidelity: "mid", flowKey: "setup", artifact: { taskPath: "mixed", decisionLoad: "high", confirmation: "partial", accessSupport: "partial" } },
+    event: { label: "Conference arrival plan", description: "A low-fidelity registration flow for updating arrival and accessibility requests before an event.", contextKey: "service", priorityKey: "access", audienceKey: "assistive", fidelity: "low", flowKey: "event", artifact: { taskPath: "unclear", decisionLoad: "moderate", confirmation: "partial", accessSupport: "unknown" } }
+  };
+  const flows = {
+    application: { label: "Complete an application or request", contextKey: "ux", priorityKey: "access", task: "complete an application or request", goal: "understand the requirements and submit the request with confidence" },
+    scheduling: { label: "Schedule, change, or confirm an appointment", contextKey: "service", priorityKey: "speed", task: "schedule, change, or confirm an appointment", goal: "make a change and understand what will happen next" },
+    account: { label: "Find and update an account setting", contextKey: "product", priorityKey: "cost", task: "find and update an account setting", goal: "make a change without needing to contact support" },
+    setup: { label: "Set up or troubleshoot a connected product", contextKey: "industrial", priorityKey: "access", task: "set up or troubleshoot a connected product", goal: "complete setup and understand the result" },
+    event: { label: "Manage an event registration or arrival plan", contextKey: "service", priorityKey: "access", task: "manage an event registration or arrival plan", goal: "update plans and receive a clear confirmation" },
+    comparison: { label: "Compare options and make a choice", contextKey: "ux", priorityKey: "access", task: "compare options and make a choice", goal: "identify a suitable option and understand the next step" },
+    other: { label: "Task shown in the uploaded prototype", contextKey: "custom", priorityKey: "neutral", task: "attempt the task shown in the prototype", goal: "complete the task and understand the outcome" }
+  };
+  const lenses = {
+    navigation: { label: "Task completion", themes: ["Starting the task", "Finding the next step", "Completing the task"] },
+    clarity: { label: "Clarity", themes: ["Understanding labels", "Understanding information", "Knowing what happens next"] },
+    accessibility: { label: "Accessibility", themes: ["Using controls", "Reading or hearing feedback", "Working with constraints"] },
+    trust: { label: "Confidence and confirmation", themes: ["Trusting the result", "Finding confirmation", "Knowing the task is complete"] }
+  };
+  const artifactFactors = {
+    taskPath: { clear: { clarity: 0.12, complexity: -0.1 }, mixed: { clarity: 0, complexity: 0 }, unclear: { clarity: -0.18, complexity: 0.14 } },
+    decisionLoad: { low: { clarity: 0.08, complexity: -0.08 }, moderate: { clarity: 0, complexity: 0 }, high: { clarity: -0.14, complexity: 0.17 } },
+    confirmation: { clear: { clarity: 0.1, contact: -0.05 }, partial: { clarity: 0, contact: 0 }, missing: { clarity: -0.15, contact: 0.1 } },
+    accessSupport: { strong: { barrier: -0.08, clarity: 0.03 }, partial: { barrier: 0, clarity: 0 }, unknown: { barrier: 0, clarity: 0 } }
+  };
+  const artifactDefaults = { taskPath: "mixed", decisionLoad: "moderate", confirmation: "partial", accessSupport: "partial" };
+  function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+  function hash(text) { return [...text].reduce((total, char) => ((total * 31) + char.charCodeAt(0)) >>> 0, 2166136261); }
+  function rngFrom(seed) { let state = seed >>> 0; return function random() { state += 0x6D2B79F5; let result = state; result = Math.imul(result ^ (result >>> 15), result | 1); result ^= result + Math.imul(result ^ (result >>> 7), result | 61); return ((result ^ (result >>> 14)) >>> 0) / 4294967296; }; }
+  function pick(random, options) { return options[Math.floor(random() * options.length)]; }
+  function percent(value) { return Math.round(value * 100) + "%"; }
+  function artifactProfile(input) {
+    const profile = Object.assign({}, artifactDefaults, input || {});
+    const effect = { clarity: 0, complexity: 0, contact: 0, barrier: 0 };
+    Object.entries(profile).forEach(([key, value]) => {
+      const factor = artifactFactors[key] && artifactFactors[key][value];
+      if (factor) Object.keys(effect).forEach(effectKey => { effect[effectKey] += factor[effectKey] || 0; });
+    });
+    return { profile, effect };
+  }
+  function touchpointsFrom(analysis) {
+    return (Array.isArray(analysis.touchpoints) ? analysis.touchpoints : []).filter(item => item && lenses[item.lens] && ["visible_support", "potential_friction", "not_shown"].includes(item.signal) && String(item.element || "").trim() && String(item.observation || "").trim()).slice(0, 6).map(item => ({
+      screen_or_page: String(item.screen_or_page || "Artifact").trim().slice(0, 100),
+      element: String(item.element).trim().slice(0, 100),
+      observation: String(item.observation).trim().slice(0, 300),
+      lens: item.lens,
+      signal: item.signal
+    }));
+  }
+  function testId(config) { const keys = [config.source || "claude-artifact-analysis", config.prototypeLabel || "custom", config.flowKey, config.audienceKey, (config.lenses || []).slice().sort().join("-"), JSON.stringify(config.artifact || {}), JSON.stringify(config.touchpoints || []), config.count]; return "PT-" + String(hash(keys.join("|")) % 1000000).padStart(6, "0"); }
+  function responseFor(record, task, random, touchpoint, concern) {
+    if (touchpoint) {
+      const element = "“" + touchpoint.element + "”";
+      if (touchpoint.signal === "not_shown") return "I could not judge " + element + " from the submitted prototype.";
+      if (record.task_completed === "no") return "I did not finish the task after reaching " + element + ".";
+      if (touchpoint.lens === "navigation") return concern ? "I had to pause at " + element + " to find the next step." : element + " helped me find the next step.";
+      if (touchpoint.lens === "clarity") return concern ? "I needed more explanation at " + element + "." : element + " gave me enough information to continue.";
+      if (touchpoint.lens === "accessibility") return concern ? "I needed another way to use " + element + "." : "I could use " + element + " in this simulated test.";
+      return concern ? "I was not sure what " + element + " meant for the result." : element + " helped me understand the result.";
+    }
+    const options = {
+      "Starting the task": ["I could find where to begin.", "I was not sure where to begin.", "I looked in more than one place before I started."], "Finding the next step": ["The next step was easy to find.", "I had to pause to work out the next step.", "I expected the next step somewhere else."], "Completing the task": ["I completed the task without help.", "I completed it after getting help.", "I did not complete the task."], "Understanding labels": ["The labels matched what I expected.", "One or more labels were unclear.", "I needed more explanation before choosing."], "Understanding information": ["The information was enough to decide.", "Some information was hard to interpret.", "I could not find information I needed."], "Knowing what happens next": ["I understood what would happen next.", "I was unsure what would happen next.", "I expected a clearer next-step explanation."], "Using controls": ["The controls worked in the way I expected.", "A control was difficult to use.", "I needed a different way to complete the action."], "Reading or hearing feedback": ["I could perceive the feedback I needed.", "Feedback was present but difficult to perceive.", "I did not notice feedback confirming my action."], "Working with constraints": ["I could complete the task in my situation.", "My device or connection made the task harder.", "The task did not work well with my access needs."], "Trusting the result": ["I trusted the result of my action.", "I was not fully confident the action worked.", "I wanted independent confirmation before trusting the result."], "Finding confirmation": ["I found clear confirmation.", "Confirmation was difficult to find.", "I could not tell whether the change was saved."], "Knowing the task is complete": ["I knew when I was finished.", "I was not sure whether I had finished.", "I expected a stronger completion signal."]
+    };
+    if (record.task_completed === "no") return "I was not able to complete the task.";
+    if (record.accessibility_barrier === "yes" && random() < 0.45) return "I needed another way to complete the task.";
+    const choices = options[record.feedback_theme] || ["I could continue.", "I needed more information."];
+    return concern ? pick(random, choices.slice(1)) : choices[0];
+  }
+  function commentFor(record, task, random, touchpoint, concern) {
+    if (touchpoint) {
+      const place = touchpoint.screen_or_page === "Artifact" ? "the prototype" : touchpoint.screen_or_page;
+      const element = "“" + touchpoint.element + "”";
+      if (touchpoint.signal === "not_shown") return "I could not see " + element + " in the submitted prototype, so I could not judge that part of the task.";
+      if (record.task_completed === "no") return "I did not finish the task. I reached " + element + " on " + place + ".";
+      if (concern) return "On " + place + ", I had to slow down at " + element + " while trying to " + task + ".";
+      return "On " + place + ", " + element + " helped me continue with the task.";
+    }
+    const openers = ["For " + task + ", ", "While trying to " + task + ", ", "In this flow, "];
+    if (record.task_completed === "no") return pick(random, openers) + "I stopped because I was not sure how to continue.";
+    if (record.accessibility_barrier === "yes") return pick(random, openers) + "I needed the interaction and feedback to work more clearly with my access setup.";
+    if (record.contacted_support === "yes") return pick(random, openers) + "I could continue, but I contacted support to confirm the result.";
+    if (record.ease_rating_1_to_7 <= 3) return pick(random, openers) + "I completed the task, but I had to slow down and check whether I understood the next step.";
+    return pick(random, openers) + "the task was straightforward and I understood the result.";
+  }
+  function themeFor(selectedLenses, artifact, random) {
+    const candidates = selectedLenses.flatMap(key => lenses[key].themes);
+    const weights = candidates.map(theme => {
+      let weight = 1;
+      if (artifact.profile.taskPath === "unclear" && /task|step/.test(theme)) weight += 2;
+      if (artifact.profile.decisionLoad === "high" && /information|labels/.test(theme)) weight += 2;
+      if (artifact.profile.confirmation === "missing" && /confirmation|complete/.test(theme)) weight += 3;
+      if (artifact.profile.accessSupport === "unknown" && /controls|feedback|constraints/.test(theme)) weight += 2;
+      return weight;
+    });
+    const target = random() * weights.reduce((sum, weight) => sum + weight, 0);
+    let total = 0;
+    for (let index = 0; index < candidates.length; index += 1) { total += weights[index]; if (target <= total) return candidates[index]; }
+    return candidates[0];
+  }
+  function generateFeedback(options) {
+    const config = options || {};
+    const source = config.source || "claude-artifact-analysis";
+    const analysis = config.analysis || {};
+    const libraryPrototype = source === "library" ? prototypeLibrary[config.prototypeKey] : null;
+    const baseFlow = flows[analysis.flow_key || config.flowKey || (libraryPrototype && libraryPrototype.flowKey)] || flows.other;
+    const flow = Object.assign({}, baseFlow, { label: analysis.primary_task || baseFlow.label, task: analysis.primary_task || baseFlow.task, goal: analysis.task_goal || baseFlow.goal });
+    const audience = audiences[config.audienceKey || (libraryPrototype && libraryPrototype.audienceKey)] || audiences.core;
+    const context = source === "library" ? (contexts[config.contextKey || libraryPrototype.contextKey] || contexts.custom) : contexts.custom;
+    const priority = source === "library" ? (priorities[config.priorityKey || libraryPrototype.priorityKey] || priorities.neutral) : priorities.neutral;
+    const profile = profiles[audience.profileKey];
+    const selectedLenses = [...new Set((config.lenses && config.lenses.length ? config.lenses : ["navigation", "clarity"]).filter(key => lenses[key]))];
+    const count = clamp(Math.round(Number(config.count) || 120), 1, 1000);
+    const artifact = artifactProfile(source === "library" ? Object.assign({}, libraryPrototype.artifact, config.artifact || {}) : config.artifact);
+    const touchpoints = touchpointsFrom(analysis);
+    const eligibleTouchpoints = touchpoints.filter(item => selectedLenses.includes(item.lens));
+    const frictionCount = touchpoints.filter(item => item.signal === "potential_friction").length;
+    const supportCount = touchpoints.filter(item => item.signal === "visible_support").length;
+    const cueClarity = clamp((supportCount - frictionCount) * 0.025, -0.1, 0.1);
+    const cueBarrier = clamp(touchpoints.filter(item => item.lens === "accessibility").reduce((sum, item) => sum + (item.signal === "potential_friction" ? 0.04 : item.signal === "visible_support" ? -0.03 : 0), 0), -0.08, 0.08);
+    const prototypeLabel = analysis.artifact_label || (libraryPrototype ? libraryPrototype.label : ((config.fidelity === "low" ? "Low-fidelity" : "Mid-fidelity") + " uploaded prototype"));
+    const id = testId({ source, prototypeLabel, flowKey: flow.label, audienceKey: audience.segment, lenses: selectedLenses, artifact: artifact.profile, touchpoints, count });
+    const random = rngFrom(hash(id));
+    const task = flow.task;
+    const records = [];
+    for (let index = 0; index < count; index += 1) {
+      const segment = pick(random, audience.segments);
+      const digitalConfidence = clamp(0.22 + (random() * 0.7), 0.1, 0.95);
+      const complexity = 0.25 + (random() * 0.65) + artifact.effect.complexity;
+      const channel = pick(random, context.channels);
+      const device = pick(random, profile.device);
+      const accessibilityBarrier = random() < clamp(profile.barrier + priority.barrier + artifact.effect.barrier + cueBarrier - (digitalConfidence * 0.11), 0.05, 0.68);
+      const clarity = clamp(0.77 - (complexity * 0.32) + (digitalConfidence * 0.18) + priority.clarity + artifact.effect.clarity + cueClarity + (audience.clarityShift || 0) + (segment.clarityShift || 0) - (accessibilityBarrier ? 0.29 : 0), 0.12, 0.96);
+      const completed = random() < clamp(0.35 + (clarity * 0.52) - (accessibilityBarrier ? 0.16 : 0), 0.16, 0.94);
+      const confidence = Math.round(clamp(1 + (clarity * 3.4) + (completed ? 0.35 : -0.6) + ((random() - 0.5) * 0.8), 1, 5));
+      const ease = Math.round(clamp(1 + (clarity * 5.2) + (completed ? 0.35 : -0.75) + ((random() - 0.5) * 1.2), 1, 7));
+      const contactedSupport = random() < clamp(0.05 + (1 - clarity) * 0.43 + priority.contact + artifact.effect.contact + (audience.supportShift || 0) + (segment.supportShift || 0) + (completed ? 0 : 0.17), 0.04, 0.78);
+      const touchpoint = eligibleTouchpoints.length ? pick(random, eligibleTouchpoints) : null;
+      const theme = touchpoint ? pick(random, lenses[touchpoint.lens].themes) : themeFor(selectedLenses, artifact, random);
+      const concernChance = clamp(0.15 + (completed ? 0 : 0.65) + (ease <= 3 ? 0.28 : 0) + (accessibilityBarrier ? 0.1 : 0) + (touchpoint && touchpoint.signal === "potential_friction" ? 0.2 : 0) - (touchpoint && touchpoint.signal === "visible_support" ? 0.1 : 0), 0.05, 0.95);
+      const concern = !completed || ease <= 3 || (accessibilityBarrier && touchpoint && touchpoint.lens === "accessibility") || random() < concernChance;
+      const record = { data_status: "synthetic", test_id: id, simulation_basis: source === "claude-artifact-analysis" ? "Claude visible-artifact profile" : (source === "library" ? "prepared artifact profile" : "student-confirmed artifact profile"), prototype_source: source === "claude-artifact-analysis" ? "student-submitted prototype analyzed by Claude" : (source === "library" ? "prepared prototype" : "student-submitted prototype"), prototype_label: prototypeLabel, prototype_fidelity: libraryPrototype ? libraryPrototype.fidelity : (config.fidelity || "mid"), task_flow: flow.label, artifact_task_path: artifact.profile.taskPath, artifact_decision_load: artifact.profile.decisionLoad, artifact_confirmation: artifact.profile.confirmation, artifact_access_support: artifact.profile.accessSupport, participant_id: id + "-P" + String(index + 1).padStart(4, "0"), participant_group: audience.segment, participant_segment: segment.label, channel, device, access_context: profile.access, accessibility_barrier: accessibilityBarrier ? "yes" : "no", task_completed: completed ? "yes" : "no", time_to_complete_seconds: Math.round(clamp(85 + (complexity * 310) + (accessibilityBarrier ? 135 : 0) + (contactedSupport ? 90 : 0) - (digitalConfidence * 65), 60, 720)), contacted_support: contactedSupport ? "yes" : "no", ease_rating_1_to_7: ease, confidence_rating_1_to_5: confidence, feedback_theme: theme, artifact_touchpoint_screen: touchpoint ? touchpoint.screen_or_page : "", artifact_touchpoint: touchpoint ? touchpoint.element : "", artifact_observation: touchpoint ? touchpoint.observation : "", artifact_signal: touchpoint ? touchpoint.signal : "", feedback_response_choice: "", feedback_comment: "" };
+      record.feedback_response_choice = responseFor(record, task, random, touchpoint, concern);
+      record.feedback_comment = commentFor(record, task, random, touchpoint, concern);
+      records.push(record);
+    }
+    return { caseId: id, context, priority, profile, audience, flow, task, source, prototype: libraryPrototype, prototypeLabel, artifact, analysis, touchpoints, lenses: selectedLenses, records };
+  }
+  function summarize(records, profile) {
+    const total = records.length || 1, overview = list => ({ completed: list.filter(record => record.task_completed === "yes").length / (list.length || 1), support: list.filter(record => record.contacted_support === "yes").length / (list.length || 1), ease: list.reduce((sum, record) => sum + Number(record.ease_rating_1_to_7), 0) / (list.length || 1) }), choices = {};
+    records.forEach(record => { const key = record.feedback_theme + "|" + record.feedback_response_choice; choices[key] = (choices[key] || 0) + 1; });
+    return { total, all: overview(records), lowerEase: overview(records.filter(record => Number(record.ease_rating_1_to_7) <= 3)), barrier: overview(records.filter(record => record.accessibility_barrier === "yes")), choices: Object.entries(choices).map(([key, count]) => { const parts = key.split("|"); return { theme: parts[0], response: parts[1], count }; }).sort((a, b) => b.count - a.count) };
+  }
+  function csv(records) { const headers = Object.keys(records[0] || {}), escape = value => { const raw = String(value ?? ""); const safe = typeof value === "string" && /^[\s]*[=+@\-]/.test(raw) ? "'" + raw : raw; return '"' + safe.replace(/"/g, '""') + '"'; }; return [headers.join(","), ...records.map(record => headers.map(header => escape(record[header])).join(","))].join("\n"); }
+  function plan(scenario) { return { data_status: "synthetic test protocol", test_id: scenario.caseId, prototype: scenario.prototypeLabel, prototype_source: scenario.source === "claude-artifact-analysis" ? "student-submitted prototype analyzed by Claude" : (scenario.source === "library" ? "prepared prototype" : "student-submitted prototype"), task_flow: scenario.flow.label, participant_condition: scenario.audience.label, artifact_profile: scenario.artifact.profile, artifact_analysis: scenario.analysis, artifact_touchpoints: scenario.touchpoints, unanchored_feedback_questions: scenario.lenses.filter(key => !scenario.touchpoints.some(item => item.lens === key)).map(key => lenses[key].label), feedback_questions: scenario.lenses.map(key => lenses[key].label), record_count: scenario.records.length, method_boundary: "Claude analyzed observable artifact features to create this profile. Touchpoints condition simulated feedback only; they are not observed user reactions. Questions without matching visible touchpoints receive generic synthetic feedback. The records do not report real-user behavior or establish causation." }; }
+  global.MSDSGNDataEngine = { audiences, prototypeLibrary, flows, lenses, artifactDefaults, generateFeedback, summarize, csv, plan, percent };
+}(typeof window === "undefined" ? globalThis : window));
+</script>
+<script>
+// Created by A.J. Merlino.
+// Three original example wireframes with prepared, hand-written visible-feature profiles.
+// Each profile describes only what its wireframe draws. The profiles are prepared examples, not Claude output or user research.
+(function (global) {
+  const F = 'font-family="Manrope,Helvetica,Arial,sans-serif"';
+  const T = (x, y, s, text, o) => `<text x="${x}" y="${y}" font-size="${s}" ${F} fill="${(o && o.fill) || "#2b4257"}"${o && o.w ? ` font-weight="${o.w}"` : ""}${o && o.a ? ` text-anchor="${o.a}"` : ""}>${text}</text>`;
+  const R = (x, y, w, h, o) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${(o && o.r) ?? 4}" fill="${(o && o.fill) || "#ffffff"}" stroke="${(o && o.stroke) || "#c9d6e0"}" stroke-width="${(o && o.sw) || 1}"${o && o.dash ? ' stroke-dasharray="4 3"' : ""}/>`;
+  const svg = (label, body) => `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}"><rect width="400" height="300" fill="#ffffff"/>${body}</svg>`;
+
+  const pathwaySvg = svg("Wireframe: learning pathway comparison page with a three-step progress bar, two pathway cards, a comparison table, and a Start application button",
+    R(0, 0, 400, 30, { r: 0, fill: "#f3f7fa", stroke: "#f3f7fa" }) + T(14, 20, 11, "Pathways", { w: 800 }) + T(300, 20, 9, "Options   Help   Sign in", { fill: "#6d8496" }) +
+    `<circle cx="70" cy="50" r="9" fill="#e4f2fc" stroke="#1f82c4"/><circle cx="200" cy="50" r="9" fill="#1f82c4"/><circle cx="330" cy="50" r="9" fill="#ffffff" stroke="#c9d6e0"/><line x1="79" y1="50" x2="191" y2="50" stroke="#1f82c4"/><line x1="209" y1="50" x2="321" y2="50" stroke="#c9d6e0"/>` +
+    T(70, 53, 9, "1", { a: "middle", fill: "#1f82c4", w: 800 }) + T(200, 53, 9, "2", { a: "middle", fill: "#ffffff", w: 800 }) + T(330, 53, 9, "3", { a: "middle", fill: "#8aa0b2", w: 800 }) +
+    T(70, 72, 9, "Explore", { a: "middle" }) + T(200, 72, 9, "Compare", { a: "middle", w: 800 }) + T(330, 72, 9, "Apply", { a: "middle", fill: "#8aa0b2" }) +
+    R(14, 84, 180, 64) + T(24, 101, 10, "Data Analytics Certificate", { w: 800 }) + T(24, 115, 9, "6 months · Online", { fill: "#6d8496" }) + R(24, 126, 10, 10, { r: 2 }) + T(39, 135, 9, "Compare") + T(148, 135, 8, "Details", { fill: "#aab8c4" }) +
+    R(206, 84, 180, 64) + T(216, 101, 10, "UX Design Certificate", { w: 800 }) + T(216, 115, 9, "8 months · Online", { fill: "#6d8496" }) + R(216, 126, 10, 10, { r: 2 }) + T(231, 135, 9, "Compare") + T(340, 135, 8, "Details", { fill: "#aab8c4" }) +
+    R(14, 160, 372, 88, { r: 3 }) + `<line x1="14" y1="182" x2="386" y2="182" stroke="#c9d6e0"/><line x1="14" y1="204" x2="386" y2="204" stroke="#c9d6e0"/><line x1="14" y1="226" x2="386" y2="226" stroke="#c9d6e0"/><line x1="130" y1="160" x2="130" y2="248" stroke="#c9d6e0"/><line x1="258" y1="160" x2="258" y2="248" stroke="#c9d6e0"/>` +
+    T(24, 175, 9, "Compare", { w: 800 }) + T(140, 175, 9, "Data Analytics", { w: 800 }) + T(268, 175, 9, "UX Design", { w: 800 }) +
+    T(24, 197, 9, "Time per week") + T(140, 197, 9, "10–12 hours") + T(268, 197, 9, "12–15 hours") +
+    T(24, 219, 9, "Cost") + T(140, 219, 9, "See catalog", { fill: "#6d8496" }) + T(268, 219, 9, "See catalog", { fill: "#6d8496" }) +
+    T(24, 241, 9, "Prerequisites") + T(140, 241, 9, "None") + T(268, 241, 9, "Portfolio review") +
+    R(262, 260, 124, 28, { r: 14, fill: "#1f82c4", stroke: "#1f82c4" }) + T(324, 278, 10, "Start application", { a: "middle", fill: "#ffffff", w: 800 }) + T(14, 278, 9, "‹ Back to Explore", { fill: "#1f82c4" }));
+
+  const phone = (x, title, inner) => R(x, 10, 118, 280, { r: 14, stroke: "#9fb3c3", sw: 1.5 }) + R(x + 44, 18, 30, 4, { r: 2, fill: "#c9d6e0", stroke: "#c9d6e0" }) + T(x + 10, 44, 10, title, { w: 800 }) + inner;
+  const appointmentSvg = svg("Wireframe: three mobile screens showing an appointment, a new-time picker with a Confirm change button, and a Change confirmed screen with Add to calendar",
+    phone(10, "Your appointment",
+      R(20, 56, 98, 70, { r: 8, fill: "#f3f7fa" }) + T(28, 74, 9, "Tue, Oct 14", { w: 800 }) + T(28, 88, 9, "9:30 AM") + T(28, 104, 8, "Dr. Patel", { fill: "#6d8496" }) + T(28, 116, 8, "Main St. Clinic", { fill: "#6d8496" }) +
+      R(20, 140, 98, 26, { r: 13, fill: "#1f82c4", stroke: "#1f82c4" }) + T(69, 157, 9, "Change time", { a: "middle", fill: "#fff", w: 800 }) +
+      T(69, 184, 8, "Cancel appointment", { a: "middle", fill: "#1f82c4" })) +
+    phone(141, "Pick a new time",
+      R(151, 54, 30, 22, { r: 6 }) + T(166, 69, 8, "Mon 13", { a: "middle" }) + R(185, 54, 30, 22, { r: 6 }) + T(200, 69, 8, "Tue 14", { a: "middle" }) + R(219, 54, 30, 22, { r: 6, fill: "#e4f2fc", stroke: "#1f82c4" }) + T(234, 69, 8, "Wed 15", { a: "middle", w: 800 }) +
+      [["8:00", 0, 0, 1], ["9:30", 1, 0, 0], ["11:00", 0, 1, 2], ["1:15", 1, 1, 0], ["3:45", 0, 2, 1], ["4:30", 1, 2, 1]].map(([t, c, r, s]) =>
+        R(151 + c * 50, 88 + r * 30, 46, 24, { r: 6, fill: s === 2 ? "#1f82c4" : "#ffffff", stroke: s === 2 ? "#1f82c4" : "#c9d6e0" }) + T(174 + c * 50, 104 + r * 30, 9, t, { a: "middle", fill: s === 2 ? "#ffffff" : s === 0 ? "#c3ced8" : "#2b4257", w: s === 2 ? 800 : 400 })).join("") +
+      T(151, 196, 7, "Gray times are unavailable", { fill: "#8aa0b2" }) +
+      R(151, 246, 98, 26, { r: 13, fill: "#1f82c4", stroke: "#1f82c4" }) + T(200, 263, 9, "Confirm change", { a: "middle", fill: "#fff", w: 800 })) +
+    phone(272, "Change confirmed",
+      `<circle cx="331" cy="92" r="20" fill="#edf7e5" stroke="#5fa82f"/><path d="M322 92 l6 6 l12 -13" fill="none" stroke="#5fa82f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` +
+      T(331, 132, 9, "Wed, Oct 15", { a: "middle", w: 800 }) + T(331, 146, 9, "11:00 AM", { a: "middle" }) + T(331, 162, 8, "Dr. Patel · Main St. Clinic", { a: "middle", fill: "#6d8496" }) +
+      R(282, 186, 98, 26, { r: 13, stroke: "#1f82c4" }) + T(331, 203, 9, "Add to calendar", { a: "middle", fill: "#1f82c4", w: 800 }) + T(331, 234, 8, "Done", { a: "middle", fill: "#1f82c4" })));
+
+  const settingsSvg = svg("Low-fidelity wireframe: a Settings menu list and a Billing and payments screen with autopay options, a payment date menu, and a Save button",
+    R(10, 10, 150, 280, { r: 6, stroke: "#9fb3c3", dash: 1 }) + T(22, 36, 11, "Settings", { w: 800 }) +
+    ["Profile", "Security", "Billing & payments", "Notifications", "Help"].map((t, i) => `<line x1="22" y1="${58 + i * 34}" x2="148" y2="${58 + i * 34}" stroke="#dbe5ec"/>` + T(22, 78 + i * 34, 10, t, { w: i === 2 ? 800 : 400 }) + T(146, 78 + i * 34, 10, "›", { a: "end", fill: "#8aa0b2" })).join("") +
+    `<path d="M160 145 C 180 145 180 60 196 60" fill="none" stroke="#9fb3c3" stroke-dasharray="3 3"/><path d="M191 56 l6 4 l-6 4" fill="none" stroke="#9fb3c3"/>` +
+    R(196, 10, 194, 280, { r: 6, stroke: "#9fb3c3", dash: 1 }) + T(208, 36, 11, "Billing & payments", { w: 800 }) +
+    T(208, 60, 9, "Autopay") + R(330, 50, 44, 16, { r: 8, fill: "#e4f2fc", stroke: "#9fb3c3" }) + T(352, 62, 8, "On", { a: "middle" }) +
+    T(208, 88, 9, "Each month, pay:", { fill: "#6d8496" }) +
+    [["Statement balance", 1], ["Minimum due", 0], ["A fixed amount", 0]].map(([t, on], i) => `<circle cx="214" cy="${106 + i * 24}" r="5" fill="${on ? "#2b4257" : "#ffffff"}" stroke="#2b4257"/>` + T(226, 110 + i * 24, 9, t)).join("") +
+    R(226, 160, 90, 18, { r: 3, dash: 1 }) + T(232, 173, 9, "$ ______", { fill: "#8aa0b2" }) +
+    T(208, 204, 9, "Payment date", { fill: "#6d8496" }) + R(208, 212, 166, 22, { r: 3 }) + T(216, 227, 9, "5th of the month") + T(366, 227, 9, "▾", { a: "end", fill: "#6d8496" }) +
+    R(208, 252, 70, 26, { r: 4, fill: "#e7edf2", stroke: "#9fb3c3" }) + T(243, 269, 10, "Save", { a: "middle", w: 800 }));
+
+  const examples = {
+    pathway: {
+      key: "pathway", label: "Learning pathway comparison", tag: "Desktop · mid fidelity", blurb: "Compare two certificate pathways, then start an application.", fidelity: "mid", audienceKey: "core", lenses: ["navigation", "clarity"], svg: pathwaySvg,
+      analysis: {
+        artifact_summary: "A single desktop page at step 2 of a three-step flow (Explore, Compare, Apply). Two certificate pathways appear as cards with Compare checkboxes above a three-row comparison table and a Start application button.",
+        primary_task: "Compare two certificate pathways and start an application", flow_key: "application",
+        task_path: "mixed", decision_load: "high", confirmation: "missing", access_support: "unknown", confidence: "high",
+        observations: [
+          { screen_or_page: "Compare page", observation: "A progress bar labels three steps, Explore, Compare, and Apply, with Compare highlighted as the current step." },
+          { screen_or_page: "Compare page", observation: "Two pathway cards list duration and format (6 months · Online; 8 months · Online), each with a Compare checkbox and a gray Details link." },
+          { screen_or_page: "Compare page", observation: "The comparison table has rows for Time per week, Cost, and Prerequisites; both Cost cells read “See catalog.”" },
+          { screen_or_page: "Compare page", observation: "A filled Start application button sits at the bottom right; a Back to Explore link sits at the bottom left." }
+        ],
+        touchpoints: [
+          { screen_or_page: "Compare page", element: "Explore · Compare · Apply", observation: "The labeled three-step progress bar shows the current step and the step that follows.", lens: "navigation", signal: "visible_support" },
+          { screen_or_page: "Compare page", element: "Start application", observation: "A single filled button is the only primary action on the page.", lens: "navigation", signal: "visible_support" },
+          { screen_or_page: "Compare page", element: "See catalog", observation: "The Cost row points elsewhere instead of showing a cost in the comparison.", lens: "clarity", signal: "potential_friction" },
+          { screen_or_page: "Compare page", element: "Details", observation: "The Details links are small, light-gray text next to the checkboxes.", lens: "accessibility", signal: "potential_friction" },
+          { screen_or_page: "After Start application", element: "Application started", observation: "No screen after Start application is included, so any confirmation or next step is not shown.", lens: "trust", signal: "not_shown" }
+        ],
+        limitations: ["Only the Compare step is shown; the Explore and Apply steps are not included.", "Contrast, keyboard order, and screen-reader labels cannot be judged from a static wireframe."]
+      }
+    },
+    appointment: {
+      key: "appointment", label: "Appointment time change", tag: "Mobile · mid fidelity", blurb: "Move a clinic appointment to a new time and confirm it.", fidelity: "mid", audienceKey: "mobile", lenses: ["navigation", "trust"], svg: appointmentSvg,
+      analysis: {
+        artifact_summary: "Three mobile screens: the current appointment with a Change time button, a date and time picker with a Confirm change button, and a Change confirmed screen with the new time and an Add to calendar button.",
+        primary_task: "Change an appointment to a new time", flow_key: "scheduling",
+        task_path: "clear", decision_load: "moderate", confirmation: "clear", access_support: "partial", confidence: "high",
+        observations: [
+          { screen_or_page: "Your appointment", observation: "The current appointment shows Tue, Oct 14 at 9:30 AM with Dr. Patel at Main St. Clinic." },
+          { screen_or_page: "Your appointment", observation: "A filled Change time button appears with a Cancel appointment text link directly below it." },
+          { screen_or_page: "Pick a new time", observation: "Three date chips and six time slots are shown; Wed 15 and 11:00 are selected, and some times are light gray with a note that gray times are unavailable." },
+          { screen_or_page: "Change confirmed", observation: "A check mark, the new date and time, an Add to calendar button, and a Done link are shown." }
+        ],
+        touchpoints: [
+          { screen_or_page: "Your appointment", element: "Change time", observation: "The filled button labels the task directly on the first screen.", lens: "navigation", signal: "visible_support" },
+          { screen_or_page: "Your appointment", element: "Cancel appointment", observation: "The cancel link sits directly under Change time with no visual separation.", lens: "clarity", signal: "potential_friction" },
+          { screen_or_page: "Pick a new time", element: "Gray times are unavailable", observation: "Unavailable times are shown by lighter gray text, explained by a small note.", lens: "accessibility", signal: "potential_friction" },
+          { screen_or_page: "Change confirmed", element: "Change confirmed", observation: "The final screen restates the new date, time, provider, and location with a check mark.", lens: "trust", signal: "visible_support" },
+          { screen_or_page: "After Done", element: "Reminder or message", observation: "No reminder, email, or text confirmation is shown after the change.", lens: "trust", signal: "not_shown" }
+        ],
+        limitations: ["The screens show one successful path; error states such as a time becoming unavailable are not included.", "Touch target size and color contrast cannot be confirmed from the wireframe."]
+      }
+    },
+    account: {
+      key: "account", label: "Autopay settings", tag: "Web · low fidelity", blurb: "Find the billing settings and change a recurring payment.", fidelity: "low", audienceKey: "returning", lenses: ["navigation", "clarity", "trust"], svg: settingsSvg,
+      analysis: {
+        artifact_summary: "A low-fidelity sketch of two screens: a Settings menu with five items, and a Billing & payments screen with an Autopay toggle, three payment options, a payment-date menu, and a Save button.",
+        primary_task: "Find and update a recurring autopay preference", flow_key: "account",
+        task_path: "mixed", decision_load: "moderate", confirmation: "missing", access_support: "unknown", confidence: "medium",
+        observations: [
+          { screen_or_page: "Settings", observation: "The menu lists Profile, Security, Billing & payments, Notifications, and Help; an arrow links Billing & payments to the second screen." },
+          { screen_or_page: "Billing & payments", observation: "An Autopay toggle reads On." },
+          { screen_or_page: "Billing & payments", observation: "Radio options read Statement balance (selected), Minimum due, and A fixed amount, with a blank dollar field under the last option." },
+          { screen_or_page: "Billing & payments", observation: "A Payment date menu reads “5th of the month,” followed by a Save button." }
+        ],
+        touchpoints: [
+          { screen_or_page: "Settings", element: "Billing & payments", observation: "Autopay is reached through a menu item that does not mention autopay or recurring payments.", lens: "navigation", signal: "potential_friction" },
+          { screen_or_page: "Billing & payments", element: "Each month, pay:", observation: "The three payment choices are labeled in plain words with one option selected.", lens: "clarity", signal: "visible_support" },
+          { screen_or_page: "Billing & payments", element: "A fixed amount", observation: "The dollar field has no visible minimum, maximum, or example amount.", lens: "clarity", signal: "potential_friction" },
+          { screen_or_page: "Billing & payments", element: "Save", observation: "No saved state or confirmation message is drawn after Save.", lens: "trust", signal: "not_shown" }
+        ],
+        limitations: ["This is a rough sketch; spacing and emphasis may not reflect the intended design.", "Error handling for an invalid fixed amount is not shown."]
+      }
+    }
+  };
+  global.MSDSGNExamples = examples;
+}(window));
+</script>
+<script>
+// Created by A.J. Merlino.
+// Demo walkthrough: no uploads, no network calls, no storage. Records come from the workbench's deterministic engine.
+(function () {
+  "use strict";
+  const X = window.MSDSGNExamples, E = window.MSDSGNDataEngine;
+  const steps = ["Pick a prototype", "Review the profile", "Set up the test", "Explore the packet"];
+  const lensText = { navigation: "Finding and completing the task", clarity: "Understanding labels, content, and next steps", accessibility: "Using the flow with access needs or constraints", trust: "Confidence and confirmation after the task" };
+  const signalText = { visible_support: "Visible support", potential_friction: "Possible friction", not_shown: "Not shown" };
+  const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const cap = v => String(v).replace(/_/g, " ");
+  let step = 0, pick = "appointment", scenario = null;
+
+  function packet() {
+    const ex = X[pick];
+    const analysis = Object.assign({}, ex.analysis, { artifact_label: ex.label + " (example)" });
+    const a = ex.analysis;
+    return E.generateFeedback({ source: "library", prototypeKey: ex.key, fidelity: ex.fidelity, audienceKey: ex.audienceKey, lenses: ex.lenses, count: 48, analysis, artifact: { taskPath: a.task_path, decisionLoad: a.decision_load, confirmation: a.confirmation, accessSupport: a.access_support } });
+  }
+
+  const views = [
+    () => `<p class="eyebrow">Step 1</p><h2>Start with a prototype.</h2><p class="lede">Students upload their own wireframe or mockup, or practice with an example. In this demo, pick one of the three examples.</p>
+      <div class="cards">${Object.values(X).map(ex => `<button type="button" class="opt" data-pick="${ex.key}" aria-pressed="${ex.key === pick}"><span class="thumb">${ex.svg}</span><span class="tag">Example · ${esc(ex.tag)}</span><strong>${esc(ex.label)}</strong><small>${esc(ex.blurb)}</small></button>`).join("")}
+      <button type="button" class="opt" disabled aria-disabled="true"><span class="thumb up" aria-hidden="true">+</span><span class="tag blue">Your own</span><strong>Upload a prototype</strong><small>PNG, JPG, WebP, or PDF. Available in the full workbench.</small></button></div>`,
+    () => { const ex = X[pick], a = ex.analysis; return `<p class="eyebrow">Step 2 · Profile of visible features</p><h2>See what the prototype actually shows.</h2>
+      <div class="profile"><div class="img">${ex.svg}</div><div><p class="lede" style="margin-bottom:0">${esc(a.artifact_summary)}</p>
+      <div class="facts"><p><strong>Task path</strong><span>${cap(a.task_path)}</span></p><p><strong>Decision load</strong><span>${cap(a.decision_load)}</span></p><p><strong>Completion feedback</strong><span>${cap(a.confirmation)}</span></p></div>
+      <h3>Details that will shape the feedback</h3><ul class="tp">${a.touchpoints.map(t => `<li><span class="signal ${t.signal}">${signalText[t.signal]}</span>${esc(t.screen_or_page)} · <strong>${esc(t.element)}</strong>: ${esc(t.observation)}</li>`).join("")}</ul></div></div>`; },
+    () => { const ex = X[pick], aud = E.audiences[ex.audienceKey]; return `<p class="eyebrow">Step 3</p><h2>Define a test protocol.</h2><p class="lede">Students choose who the synthetic participants represent, which questions to ask, and how many records to generate.</p>
+      <div class="setup"><div style="display:grid;gap:12px"><div class="field"><p class="lbl">Participant condition</p><p class="val">${esc(aud.label)}</p><p class="note">${esc(aud.note)}</p></div><div class="field"><p class="lbl">Synthetic records</p><p class="val">48 records · quick test</p><p class="note">The same profile and protocol always produce the same records.</p></div></div>
+      <div class="field"><p class="lbl">Feedback questions (two or three)</p><ul class="checks">${Object.keys(lensText).map(k => `<li class="${ex.lenses.includes(k) ? "on" : ""}">${lensText[k]}</li>`).join("")}</ul></div></div>`; },
+    () => { scenario = scenario || packet(); const s = E.summarize(scenario.records, scenario.profile);
+      const q = scenario.records.find(r => r.artifact_touchpoint && (r.task_completed === "no" || Number(r.ease_rating_1_to_7) <= 3)) || scenario.records[0];
+      return `<p class="eyebrow">Step 4 · Synthetic evidence packet</p><h2>Analyze patterns, then write the recommendation.</h2>
+      <div class="kpis"><div class="kpi"><span>Completed task</span><strong>${E.percent(s.all.completed)}</strong></div><div class="kpi"><span>Needed support</span><strong>${E.percent(s.all.support)}</strong></div><div class="kpi"><span>Average ease</span><strong>${(Math.round(s.all.ease * 10) / 10).toFixed(1)} / 7</strong></div><div class="kpi id"><span>Test ID</span><strong>${esc(scenario.caseId)}</strong></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Participant</th><th>Completed</th><th>Ease</th><th>Feedback theme</th><th>Artifact detail</th><th>Response</th></tr></thead><tbody>${scenario.records.slice(0, 5).map(r => `<tr><td>${esc(r.participant_id)}</td><td>${esc(r.task_completed)}</td><td>${esc(r.ease_rating_1_to_7)} / 7</td><td>${esc(r.feedback_theme)}</td><td>${esc(r.artifact_touchpoint || "No matching detail")}</td><td>${esc(r.feedback_response_choice)}</td></tr>`).join("")}</tbody></table></div>
+      <p class="quote">“${esc(q.feedback_comment)}”<cite>${esc(q.participant_id)} · ${esc(q.feedback_theme)} · synthetic</cite></p>`; }
+  ];
+
+  function render(focus) {
+    document.getElementById("stepper").innerHTML = steps.map((t, i) => `<li><button type="button" data-step="${i}" ${i === step ? 'aria-current="step"' : ""} class="${i < step ? "done" : ""}"><b>${i < step ? "✓" : i + 1}</b><span>${t}</span></button></li>`).join("");
+    const stage = document.getElementById("stage");
+    stage.innerHTML = `<div class="fade">${views[step]()}</div>`;
+    document.getElementById("back").disabled = step === 0;
+    document.getElementById("next").textContent = step === steps.length - 1 ? "Start over" : "Next";
+    if (focus) stage.querySelector("h2").setAttribute("tabindex", "-1"), stage.querySelector("h2").focus({ preventScroll: true });
+    postHeight();
+  }
+  function go(n) { step = (n + steps.length) % steps.length; render(true); }
+  function postHeight() { try { if (window.parent !== window) window.parent.postMessage({ type: "msdsgn-demo-height", height: document.documentElement.scrollHeight }, "*"); } catch (_) {} }
+
+  document.addEventListener("click", e => {
+    const p = e.target.closest("[data-pick]"); if (p) { pick = p.dataset.pick; scenario = null; render(false); return; }
+    const s = e.target.closest("[data-step]"); if (s) { go(Number(s.dataset.step)); return; }
+    if (e.target.closest("#next")) go(step + 1);
+    if (e.target.closest("#back")) go(step - 1);
+  });
+  window.addEventListener("resize", postHeight);
+  render(false);
+})();
+</script>
+</body>
+</html>
