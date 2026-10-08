@@ -118,7 +118,7 @@ h2 { max-width: 9ch; margin: 0 0 2.35rem; font-size: clamp(3.8rem, 7.4vw, 8.5rem
 
 .work { display: grid; grid-template-columns: minmax(16rem, 0.95fr) minmax(20rem, 1.05fr); gap: clamp(3rem, 9vw, 10rem); align-items: start; min-height: 85vh; }
 .work .section-heading { position: sticky; top: 8rem; }
-.project-index { display: grid; gap: clamp(3.5rem, 6vw, 5.5rem); max-width: 33rem; padding-top: clamp(5rem, 8vw, 7rem); }
+.project-index { display: grid; gap: clamp(3.5rem, 6vw, 5.5rem); max-width: 33rem; padding-top: 0; }
 .project { max-width: 33rem; }
 .project--offset { margin-left: clamp(0rem, 8vw, 8rem); }
 .project__art-link { display: block; width: min(100%, 24rem); margin: 0 0 1.8rem; overflow: hidden; background: var(--moss); box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.2); }
