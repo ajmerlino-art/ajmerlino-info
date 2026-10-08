@@ -102,7 +102,7 @@ h2 { max-width: 9ch; margin: 0 0 2.35rem; font-size: clamp(3.8rem, 7.4vw, 8.5rem
 .funding { border-top: 1px solid rgba(244, 240, 231, 0.12); }
 .funding__intro { display: grid; grid-template-columns: minmax(18rem, 0.9fr) minmax(22rem, 1.1fr); gap: clamp(3rem, 10vw, 12rem); align-items: start; max-width: 70rem; }
 .funding__title h2 { max-width: 7.4em; margin-bottom: 0; font-size: clamp(3.6rem, 5.2vw, 6.4rem); line-height: 0.96; }
-.funding__intro > p:last-child { max-width: 31rem; margin: 0; padding-top: clamp(4.5rem, 10vw, 8rem); color: rgba(244, 240, 231, 0.86); font-size: clamp(1.05rem, 1.45vw, 1.25rem); font-weight: 300; line-height: 1.62; text-shadow: 0 2px 18px rgba(16, 18, 15, 0.96); }
+.funding__intro > p:last-child { max-width: 31rem; margin: 0; padding-top: 2.5rem; color: rgba(244, 240, 231, 0.86); font-size: clamp(1.05rem, 1.45vw, 1.25rem); font-weight: 300; line-height: 1.62; text-shadow: 0 2px 18px rgba(16, 18, 15, 0.96); }
 .funding__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: clamp(4.5rem, 8vw, 7rem) 0 0; padding: 0; list-style: none; }
 .funding__list li { min-height: 17rem; padding: 1.8rem clamp(1.25rem, 3.4vw, 3.8rem) 1.2rem 0; border-top: 1px solid rgba(244, 240, 231, 0.16); }
 .funding__list li + li { padding-right: 0; padding-left: clamp(1.25rem, 3.4vw, 3.8rem); border-left: 1px solid rgba(244, 240, 231, 0.16); }
