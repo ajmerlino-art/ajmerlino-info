@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="An interactive portfolio demonstration of a learning analytics system that maps xAPI activity to program skills and identifies a next step." />
+<meta name="description" content="An interactive portfolio reconstruction of a deployed learning analytics system that maps xAPI activity to program skills and recommends next steps." />
 <title>Skill EQ Dashboard | A.J. Merlino</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -175,12 +175,12 @@ h1 { font-family: var(--heading); font-size: 26px; font-weight: 800; letter-spac
 
 <style>
   .portfolio-nav{position:sticky;top:0;z-index:10000;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:68px;padding:0 clamp(20px,4vw,56px);background:rgba(16,18,15,.94);border-bottom:1px solid rgba(244,240,231,.1);backdrop-filter:blur(14px);color:#f4f0e7;font-family:"DM Mono",ui-monospace,monospace}
-  .portfolio-nav__wordmark{justify-self:start;color:#f4f0e7;text-decoration:none;font-size:.82rem;font-weight:500;letter-spacing:.14em;line-height:1.35;text-transform:uppercase}.portfolio-nav__links{display:flex;gap:clamp(12px,1.8vw,30px);align-items:center;font-size:.7rem;letter-spacing:.11em;line-height:1.35;text-transform:uppercase}.portfolio-nav__links a{color:rgba(244,240,231,.76);text-decoration:none;transition:color 180ms ease}.portfolio-nav__links a:hover,.portfolio-nav__links a:focus-visible,.portfolio-nav__links a[aria-current="page"]{color:#b7c995}.portfolio-nav__spacer{justify-self:end;width:1px;height:1px}
+  .portfolio-nav__wordmark{justify-self:start;color:#f4f0e7;text-decoration:none;font-size:.82rem;font-weight:500;letter-spacing:.14em;line-height:1.35;text-transform:uppercase}.portfolio-nav__links{display:flex;gap:clamp(12px,1.8vw,30px);align-items:center;font-size:.7rem;letter-spacing:.11em;line-height:1.35;text-transform:uppercase}.portfolio-nav__links a{color:rgba(244,240,231,.76);text-decoration:none;transition:color 180ms ease}.portfolio-nav__links a:hover,.portfolio-nav__links a:focus-visible{color:#b7c995}.portfolio-nav__spacer{justify-self:end;width:1px;height:1px}
   @media(max-width:760px){.portfolio-nav{grid-template-areas:"mark spacer" "links links";grid-template-columns:1fr auto;row-gap:10px;min-height:0;padding:15px 20px 13px}.portfolio-nav__wordmark{grid-area:mark}.portfolio-nav__links{grid-area:links;justify-content:space-between;gap:8px;font-size:.54rem}.portfolio-nav__spacer{grid-area:spacer}}
 </style>
 <nav class="portfolio-nav" aria-label="Portfolio navigation">
   <a class="portfolio-nav__wordmark" href="../../index.html#top" aria-label="A.J. Merlino home">A.J. Merlino</a>
-  <div class="portfolio-nav__links"><a href="../about.html#bio">About</a><a href="music-industry-studies.html">Leadership</a><a href="../../index.html#work" aria-current="page">Product work</a><a href="../../index.html#music">Scholarship</a><a href="../../index.html#contact">Contact</a></div>
+  <div class="portfolio-nav__links"><a href="../about.html#bio">About</a><a href="../../index.html#leadership">Leadership</a><a href="../../index.html#work">Design</a><a href="../../index.html#music">Music</a><a href="../../index.html#contact">Contact</a></div>
   <span class="portfolio-nav__spacer" aria-hidden="true"></span>
 </nav>
 
@@ -191,7 +191,7 @@ h1 { font-family: var(--heading); font-size: 26px; font-weight: 800; letter-spac
   <div>
     <p class="case-kicker">Interactive portfolio demonstration</p>
     <h2 id="case-title">Skill EQ Dashboard</h2>
-    <p><strong>Purpose:</strong> help learners and educators see how program activity connects to skills and competencies. The deployed system read xAPI statements from an LRS, mapped the activity to program skills, and used the resulting matrix to suggest a next step.<br /><br /><strong>My role:</strong> Product design, learning and competency architecture, experience design, data-to-skill mapping, and recommendation logic.<br /><br /><strong>Portfolio note:</strong> This is a wireframe version of a deployed system. It retains the central workflow while omitting proprietary data, branding, and production details.</p>
+    <p><strong>Purpose:</strong> connect learner activity with the skills and competencies students were developing across a program. The deployed system read xAPI statements from an LRS, mapped that activity to the relevant skills and competencies, and used the resulting skill matrix to recommend what to do next.<br /><br /><strong>My role:</strong> Product design, learning and competency architecture, experience design, data-to-skill mapping, and recommendation logic.<br /><br /><strong>Portfolio note:</strong> The interface shown here is a wireframe recreation of a deployed system. It preserves the core workflow and interaction model while removing proprietary data, branding, and production details.</p>
   </div>
 </section>
 
