@@ -142,7 +142,7 @@ h2 { max-width: 9ch; margin: 0 0 2.35rem; font-size: clamp(3.8rem, 7.4vw, 8.5rem
 .project__link { width: fit-content; color: var(--lichen-bright); font: 0.7rem var(--mono); letter-spacing: 0.09em; line-height: 1.35; text-transform: uppercase; transition: color 220ms var(--curve), transform 220ms var(--curve); }
 .project__link:hover, .project__link:focus-visible { color: var(--parchment); transform: translateX(0.35rem); }
 
-.music { display: grid; grid-template-columns: minmax(16rem, 0.95fr) minmax(20rem, 1.05fr); gap: clamp(3rem, 9vw, 10rem); align-items: start; min-height: 85vh; }
+.music { display: grid; grid-template-columns: minmax(16rem, 0.95fr) minmax(20rem, 1.05fr); gap: clamp(3rem, 9vw, 10rem); align-items: start; min-height: 85vh; padding-top: 0; }
 .music__heading { position: static; }
 .music__note { margin: 0; }
 .work-archive { display: grid; gap: 0; padding-top: 0; }
