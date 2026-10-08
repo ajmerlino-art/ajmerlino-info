@@ -142,7 +142,7 @@ h2 { max-width: 9ch; margin: 0 0 2.35rem; font-size: clamp(3.8rem, 7.4vw, 8.5rem
 .project__link:hover, .project__link:focus-visible { color: var(--parchment); transform: translateX(0.35rem); }
 
 .music { display: grid; grid-template-columns: minmax(16rem, 0.95fr) minmax(20rem, 1.05fr); gap: clamp(3rem, 9vw, 10rem); align-items: start; min-height: 85vh; }
-.music__heading { position: sticky; top: 8rem; }
+.music__heading { position: static; }
 .music__note { margin: 0; }
 .work-index { display: grid; gap: 0; max-width: 27rem; margin: 3rem 0 0; padding: 1.15rem 0 0; border-top: 1px solid rgba(244, 240, 231, 0.18); }
 .work-index__label, .work-group__head > p { margin: 0 0 0.55rem; color: var(--lichen); font: 0.62rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
